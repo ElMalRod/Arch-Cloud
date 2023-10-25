@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Credenciales inválidas' });
     }
 
-    // En este punto, la autenticación fue exitosa, puedes devolver información del usuario si es necesario
+    // En este punto, la autenticación fue exitosa
    // console.log(`Autenticación exitosa para ${user.name}`);
     res.json({ message: 'Autenticación exitosa', user });
 

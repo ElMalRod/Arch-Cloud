@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
 
 // Método para comparar contraseñas
 userSchema.methods.comparePassword = function(candidatePassword) {
-  // Esto es solo un ejemplo y NO es seguro. No se recomienda almacenar contraseñas sin cifrar.
   const match = this.password === candidatePassword;
   if (!match) {
     console.log('Contraseñas no coinciden:', candidatePassword, this.password);

@@ -6,7 +6,7 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Habilitar CORS - Colócalo al principio
+// Habilitar CORS
 app.use(cors());
 
 // Conectar a la base de datos
