@@ -1,0 +1,86 @@
+use ("cloudArch")
+
+db.createCollection("users",{
+  validator:{
+    $jsonSchema:{
+      bsonType:"object",
+      required:["name","email","password","rol"],
+      properties:{
+        name:{
+          bsonType:"string",
+          description:"must be a string and is required"
+        },
+        email:{
+          bsonType:"string",
+          description:"must be a string and is required"
+        },
+        password:{
+          bsonType:"string",
+          description:"must be a string and is required"
+        },
+        rol:{
+          bsonType:"string",
+          description:"must be a string and is required"
+        },
+      }
+    }
+  }
+})
+
+db.createCollection("files", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["filename", "extension", "user_id", "path", "shared"],
+      properties: {
+        filename: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        extension: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        user_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        },
+        path: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        shared: {
+          bsonType: "bool",
+          description: "must be a boolean and is required"
+        },
+      }
+    }
+  }
+})
+
+db.createCollection("trash", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["filename", "extension", "user_id", "path"],
+      properties: {
+        filename: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        extension: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        user_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        },
+        path: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+      }
+    }
+  }
+})

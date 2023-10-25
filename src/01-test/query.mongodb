@@ -1,0 +1,3 @@
+use ("cloudArch")
+
+db.data.find().count()

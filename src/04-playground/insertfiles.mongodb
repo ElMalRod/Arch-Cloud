@@ -1,0 +1,17 @@
+use ("cloudArch")
+
+db.files.insert({
+  filename: "Documento1",
+  extension: "txt",
+  user_id: ObjectId("65376e53104a74a899f6be72"),
+  path: "Raiz/Documento1.txt",
+  shared: false
+})
+
+db.files.insert({
+  filename: "Documento2",
+  extension: "html",
+  user_id: ObjectId("65376e53104a74a899f6be73"),
+  path: "Raiz/Documento2.html",
+  shared: false
+})
