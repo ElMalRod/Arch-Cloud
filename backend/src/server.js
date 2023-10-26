@@ -1,7 +1,10 @@
 const express = require('express');
 const connectDB = require('./config/db');
-const routes = require('./routes');
+const routes = require('./controllers/userController');
 const cors = require('cors');
+const fileRoutes = require('./routes/fileRoutes');
+const trashRoutes = require('./routes/trashRoutes');
+const directoryRoutes = require('./routes/directoryRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,7 +22,10 @@ app.use('/', routes);
 app.use('/api/auth', require('./routes/login')); // Ruta de autenticación
 app.use('/api/auth', require('./routes/register')); // Ruta de registro
 
-// Login
+// Rutas para los archivos, la papelera y los directorios
+app.use('/api/files', fileRoutes);
+app.use('/api/trash', trashRoutes);
+app.use('/api/directories', directoryRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {

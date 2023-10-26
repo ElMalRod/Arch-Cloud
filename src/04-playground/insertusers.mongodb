@@ -16,26 +16,4 @@ db.users.insert({
   rol: "empleado"
 })
 
-// Visitante 1
-db.users.insert({
-  name: "Visitante1",
-  email: "visitante1@email.com",
-  password: "123",
-  rol: "visitante"
-})
 
-// Visitante 2
-db.users.insert({
-  name: "Visitante2",
-  email: "visitante2@email.com",
-  password: "456",
-  rol: "visitante"
-})
-
-// Visitante 3
-db.users.insert({
-  name: "Visitante3",
-  email: "visitante3@email.com",
-  password: "789",
-  rol: "visitante"
-})

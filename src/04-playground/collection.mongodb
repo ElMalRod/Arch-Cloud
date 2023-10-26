@@ -31,7 +31,7 @@ db.createCollection("files", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["filename", "extension", "user_id", "path", "shared"],
+      required: ["filename", "extension", "user_id", "path", "shared", "directory_id"],
       properties: {
         filename: {
           bsonType: "string",
@@ -53,11 +53,26 @@ db.createCollection("files", {
           bsonType: "bool",
           description: "must be a boolean and is required"
         },
+        createdAt: {
+          bsonType: "date",
+          description: "Date and time of creation"
+        },
+        updatedAt: {
+          bsonType: "date",
+          description: "Date and time of last update"
+        },
+        content: {
+          bsonType: "string",
+          description: "must be a string and is required",
+        },
+        directory_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        }
       }
     }
   }
 })
-
 db.createCollection("trash", {
   validator: {
     $jsonSchema: {
@@ -80,6 +95,66 @@ db.createCollection("trash", {
           bsonType: "string",
           description: "must be a string and is required"
         },
+        createdAt: {
+          bsonType: "date",
+          description: "Date and time of creation"
+        },
+        updatedAt: {
+          bsonType: "date",
+          description: "Date and time of last update"
+        }
+      }
+    }
+  }
+})
+
+db.createCollection("directories", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["name", "user_id"],
+      properties: {
+        name: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        },
+        user_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        },
+        files: {
+          bsonType: "array",
+          items: {
+            bsonType: "objectId"
+          },
+          description: "array of file IDs"
+        },
+        subdirectories: {
+          bsonType: "array",
+          items: {
+            bsonType: "objectId"
+          },
+          description: "array of subdirectory IDs"
+        }
+      }
+    }
+  }
+})
+
+db.createCollection("shared_files", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["file_id", "shared_with"],
+      properties: {
+        file_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        },
+        shared_with: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        }
       }
     }
   }

@@ -23,7 +23,23 @@ const fileSchema = new Schema({
     type: Boolean,
     required: true,
   },
-  
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  directory_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Directory',
+    required: true,
+  },
 });
 
 const File = mongoose.model('File', fileSchema);

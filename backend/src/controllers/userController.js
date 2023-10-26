@@ -1,7 +1,8 @@
-// src/routes/index.js
 const express = require('express');
 const router = express.Router();
-const UserModel = require('../models/userModel'); // Asegúrate de cambiar esto al nombre de tu modelo
+const UserModel = require('../models/userModel');
+const DirectoryModel = require('../models/directoryModel');
+
 
 // Ruta para obtener un solo usuario por su _id
 router.get('/users/:id', async (req, res) => {
@@ -21,16 +22,27 @@ router.get('/users/:id', async (req, res) => {
 });
 
 router.post('/users', async (req, res) => {
-  console.log(req.body);
   try {
     const newUser = new UserModel(req.body);
     await newUser.save();
-    res.json(newUser);
+
+    // Crear automáticamente un directorio raíz para el nuevo usuario
+    const rootDirectory = new DirectoryModel({
+      name: 'Raiz', 
+      user_id: newUser._id, // Asigna el ID del nuevo usuario
+      files: [], 
+      subdirectories: [], 
+    });
+
+    await rootDirectory.save();
+
+    res.json({ user: newUser, rootDirectory });
   } catch (error) {
     console.error(`Error al crear un nuevo usuario: ${error}`);
     res.status(500).send('Error interno del servidor');
   }
 });
+
 
 // Ruta para obtener todos los usuarios
 router.get('/users', async (req, res) => {
