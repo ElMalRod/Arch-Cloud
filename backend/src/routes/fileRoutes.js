@@ -31,6 +31,29 @@ router.get('/files/:userId', async (req, res) => {
 });
 
 // Ruta para guardar el contenido de un archivo
-router.post("/save/:fileId", fileController.saveFileContent);
+router.post('/save/:fileId', async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+    const { content } = req.body;
+
+    // Buscar el archivo por su ID
+    const file = await File.findById(fileId);
+
+    if (!file) {
+      return res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+
+    // Actualizar el contenido del archivo
+    file.content = content;
+    await file.save();
+
+    res.json({ message: 'Contenido guardado exitosamente' });
+  } catch (error) {
+    console.error('Error al guardar el contenido:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+module.exports = router;
 
 module.exports = router;

@@ -51,3 +51,39 @@ exports.getAllDirectories = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+// subdirectorios a partir de un directorio específico
+exports.getSubdirectoriesFromDirectory = async (req, res) => {
+  try {
+    const userId = req.params.userId; // Puedes obtener el ID del usuario de la solicitud, o de donde lo tengas almacenado
+    const directoryId = req.params.directoryId; // ID del directorio específico
+
+    // Función recursiva para obtener subdirectorios
+    const getSubdirectoriesRecursive = async (directoryId) => {
+      // Buscar el directorio actual
+      const currentDirectory = await Directory.findOne({ user_id: userId, _id: directoryId });
+
+      if (!currentDirectory) {
+        return [];
+      }
+
+      // Obtener subdirectorios del directorio actual
+      const subdirectories = await Directory.find({ user_id: userId, _id: { $in: currentDirectory.subdirectories } });
+
+      // Recorrer recursivamente los subdirectorios
+      const subdirectoriesWithChildren = await Promise.all(subdirectories.map(async (subdirectory) => {
+        const children = await getSubdirectoriesRecursive(subdirectory._id);
+        return { ...subdirectory.toObject(), subdirectories: children };
+      }));
+
+      return subdirectoriesWithChildren;
+    };
+
+    // Llamar a la función recursiva con el directorio raíz
+    const subdirectories = await getSubdirectoriesRecursive(directoryId);
+
+    res.json(subdirectories);
+  } catch (error) {
+    console.error('Error al obtener subdirectorios desde el directorio específico:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
