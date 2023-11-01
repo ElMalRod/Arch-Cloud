@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import TextEditor from './TextEditor';
 import Swal from 'sweetalert2';
+import { useParams } from 'react-router-dom';
 
 function CreateFile() {
+  const { directoryId } = useParams();
   const [formData, setFormData] = useState({
     filename: '',
     extension: '.txt',
@@ -11,7 +12,19 @@ function CreateFile() {
     content: '',
   });
   const [createdFile, setCreatedFile] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Si el directoryId no está presente en la URL, intenta obtenerlo del localStorage
+    if (!directoryId) {
+      const storedDirectoryId = localStorage.getItem('directoryId');
+      if (storedDirectoryId) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          directoryId: storedDirectoryId,
+        }));
+      }
+    }
+  }, [directoryId]);
 
   const handleChange = (e) => {
     setFormData({
@@ -32,10 +45,10 @@ function CreateFile() {
 
     try {
       const userId = localStorage.getItem('userId');
-      const directoryId = formData.directoryId || localStorage.getItem('directoryId');
+      const currentDirectoryId = formData.directoryId || directoryId;
 
-      if (!directoryId) {
-        throw new Error("Directorio no encontrado");
+      if (!currentDirectoryId) {
+        throw new Error("DirectoryId no encontrado");
       }
 
       const path = `/ruta/del/archivo/${userId}/${formData.filename}${formData.extension}`;
@@ -48,7 +61,7 @@ function CreateFile() {
         path: path,
         createdAt: new Date(),
         updatedAt: new Date(),
-        directory_id: directoryId,
+        directory_id: currentDirectoryId,
       };
 
       const response = await axios.post('http://localhost:4000/api/files/create', {
@@ -73,11 +86,6 @@ function CreateFile() {
     } catch (error) {
       console.error('Error al crear el archivo:', error.message);
     }
-  };
-
-
-  const closeModal = () => {
-    setIsModalOpen(false);
   };
 
   return (

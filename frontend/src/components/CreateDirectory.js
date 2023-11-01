@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useParams } from 'react-router-dom';
 
 function CreateDirectory() {
+  const { directoryId } = useParams();
   const [formData, setFormData] = useState({
     name: '',
     user_id: '',
     parentDirectory_id: '',
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // Si el directoryId no está presente en la URL, intenta obtenerlo del localStorage
+    if (!directoryId) {
+      const storedDirectoryId = localStorage.getItem('directoryId');
+      if (storedDirectoryId) {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          parentDirectory_id: storedDirectoryId,
+        }));
+      }
+    }
+  }, [directoryId]);
 
   const handleChange = (e) => {
     setFormData({
@@ -22,16 +36,16 @@ function CreateDirectory() {
 
     try {
       const userId = localStorage.getItem('userId');
-      const parentDirectoryId = localStorage.getItem('directoryId');
+      const currentDirectoryId = formData.parentDirectory_id || directoryId;
 
-      if (!parentDirectoryId) {
+      if (!currentDirectoryId) {
         throw new Error("Directorio padre no encontrado");
       }
 
       const formDataForRequest = {
         name: formData.name,
         user_id: userId,
-        parentDirectory_id: parentDirectoryId,
+        parentDirectory_id: currentDirectoryId,
       };
 
       const response = await axios.post('http://localhost:4000/api/directories', formDataForRequest);
@@ -51,10 +65,6 @@ function CreateDirectory() {
     } catch (error) {
       console.error('Error al crear el directorio:', error.message);
     }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
   };
 
   return (
