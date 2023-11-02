@@ -51,7 +51,7 @@ function CreateFile() {
         throw new Error("DirectoryId no encontrado");
       }
 
-      const path = `/ruta/del/archivo/${userId}/${formData.filename}${formData.extension}`;
+      const path = `/archivo/${userId}/${formData.filename}${formData.extension}`;
 
       const formDataForRequest = {
         filename: formData.filename,

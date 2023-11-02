@@ -16,7 +16,7 @@ function App() {
         <Route path="/empleado" element={<ViewEmpleado />} />
         <Route path="/editor/:fileId/:userId/:filename" element={<TextEditorPage />} />
         <Route path="/directory/:directoryId/:directoryName" element={<DirectorySelect />} />
-        <Route path="/editor/nuevo-documento" element={<NewDocument />} />
+        <Route path="/editor/:directoryId/nuevo-documento" element={<NewDocument />} />
       </Routes>
     </Router>
   );

@@ -5,6 +5,7 @@ import axios from "axios";
 import { FaFileAlt, FaSave, FaShareAlt, FaTrashAlt, FaArrowLeft } from 'react-icons/fa';
 import Alert from '@material-ui/lab/Alert';
 
+
 function TextEditorPage() {
   const { userId, filename, fileId } = useParams();
   const [content, setContent] = useState("");
@@ -52,7 +53,7 @@ function TextEditorPage() {
       <div className="fixed top-0 inset-0 grid grid-cols-1 place-content-start justify-items-center bg-gray-200 bg-opacity-40 overflow-y-scroll">
         <div className="flex items-center h-[100px] pl-4 text-2xl text-gray-600">
           <div className="pr-2"><FaFileAlt /></div>
-          <p> Nombre del documento</p>
+          <p>{filename}</p>
           <div
             onClick={() => handleSave(content)}
             disabled={isSaving}

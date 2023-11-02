@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CreateFile from "./CreateFile";
 import CreateDirectory from "./CreateDirectory";
 import Modal from "../views/Modal";
 import logo from "../assets/2.png";
 import { FaFileAlt, FaTrash, FaFolder, FaUserFriends } from 'react-icons/fa';
+import NewDocument from "./NewDocument";
+
 
 function Navbar() {
   // Usa el estado para controlar la visibilidad del modal de Crear Archivo
   const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
+  const [directoryId, setDirectoryId] = useState(null); // Estado para almacenar el directoryId
 
   const openCreateFileModal = () => {
     setIsCreateFileModalOpen(true);
@@ -49,10 +52,33 @@ function Navbar() {
 
   // Editor de texto---------------------------------------------
   const openNewDocumentTab = () => {
-    // Abre una nueva pestaña o ventana del navegador
-    const newDocumentUrl = `/editor/nuevo-documento`;
-  window.open(newDocumentUrl, "_blank");
+    const urlParts = window.location.pathname.split('/');
+    const newDirectoryId = urlParts.length >= 3 ? urlParts[2] : localStorage.getItem('directoryId');
+    setDirectoryId(newDirectoryId);
+
+    const newDocumentUrl = `/editor/${newDirectoryId}/nuevo-documento`;
+    const newWindow = window.open(newDocumentUrl, "_blank");
+
+    // Esperar a que la nueva ventana se cargue completamente
+    const checkWindowLoaded = () => {
+      if (newWindow && newWindow.document && newWindow.document.readyState === 'complete') {
+        // Puedes intentar acceder al contenido aquí
+        newWindow.postMessage({ type: 'getDocumentContent' }, window.origin);
+      } else {
+        // Si la ventana no está cargada, espera un poco y verifica nuevamente
+        setTimeout(checkWindowLoaded, 100);
+      }
+    };
+
+    // Iniciar la verificación de carga de la ventana
+    checkWindowLoaded();
   };
+  // Verifica si el directoryId no está en la URL y está almacenado en el localStorage
+  useEffect(() => {
+    const urlParts = window.location.pathname.split('/');
+    const newDirectoryId = urlParts.length >= 3 ? urlParts[2] : localStorage.getItem('directoryId');
+    setDirectoryId(newDirectoryId);
+  }, []);
 
   return (
     <div className="bg-[#F6F5F5] w-[100%] grid grid-cols-1 place-content-start justify-items-center gap-2 p-2 text-lg text-gray-600">
