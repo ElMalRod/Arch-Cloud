@@ -47,8 +47,15 @@ function Navbar() {
     setIsCreatePaperbinModalOpen(false);
   };
 
+  // Editor de texto---------------------------------------------
+  const openNewDocumentTab = () => {
+    // Abre una nueva pestaña o ventana del navegador
+    const newDocumentUrl = `/editor/nuevo-documento`;
+  window.open(newDocumentUrl, "_blank");
+  };
+
   return (
-    <div className="bg-white  w-[100%] grid grid-cols-1 place-content-start justify-items-center gap-2 p-2 text-lg text-gray-600">
+    <div className="bg-[#F6F5F5] w-[100%] grid grid-cols-1 place-content-start justify-items-center gap-2 p-2 text-lg text-gray-600">
 
       {/*CREATE DOCUMENT */}
       <div className="bg-blue-100n grid place-content-center p-4 ">
@@ -102,6 +109,14 @@ function Navbar() {
         <CreateDirectory />
       </Modal>
 
+      {/*CREATE DOCUMENT */}
+      <div
+        className="h-[25px] w-full cursor-pointer hover:bg-gray-300 rounded-xl mx-2 flex items-center p-4"
+        onClick={openNewDocumentTab}
+      >
+        <FaFileAlt className="text-gray-600" />
+        <p className="pl-2"> Nuevo Documento</p>
+      </div>
 
     </div>
   );

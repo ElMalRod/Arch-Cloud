@@ -5,6 +5,7 @@ import ViewAdministrador from './views/ViewAdministrador';
 import ViewEmpleado from './views/ViewEmpleado';
 import TextEditorPage from './components/TextEditorPage';
 import DirectorySelect from './views/DirectorySelect';
+import NewDocument from './components/NewDocument';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/empleado" element={<ViewEmpleado />} />
         <Route path="/editor/:fileId/:userId/:filename" element={<TextEditorPage />} />
         <Route path="/directory/:directoryId/:directoryName" element={<DirectorySelect />} />
+        <Route path="/editor/nuevo-documento" element={<NewDocument />} />
       </Routes>
     </Router>
   );

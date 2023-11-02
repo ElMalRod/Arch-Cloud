@@ -27,7 +27,7 @@ const FileList = () => {
   }, [directoryId]);
 
   return (
-    <div className="w-full bg-green-100">
+    <div className="w-full">
       <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 place-content-start justify-items-center gap-2 pt-2 ">
         {files.map((file) => (
           <FileComponent key={file._id} file={file} />
