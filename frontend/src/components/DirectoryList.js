@@ -27,7 +27,7 @@ const DirectoryList = () => {
   }, [directoryId]);
 
   return (
-    <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 place-content-start justify-items-center gap-2 pt-2">
+    <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 place-content-start justify-items-center gap-2 pt-2 pl-4">
       {directories
         .filter((directory) => directory._id !== localStorage.getItem("directoryId"))
         .map((directory) => (

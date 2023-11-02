@@ -9,10 +9,10 @@ function ViewEmpleado() {
 
   return (
     <div className="h-screen w-screen flex flex-row-reverse overflow-x-hidden">
-      <div className='w-[85%] bg-[white]'>
-        <TopNavbar />
-        <FileList />
+      <div className='w-[85%] bg-[white] flex flex-col-reverse'>
         <DirectoryList />
+        <FileList />
+        <TopNavbar />
       </div>
       <div className='w-[15%] bg-[#F6F5F5]'>
         <Navbar />

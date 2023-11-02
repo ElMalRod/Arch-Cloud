@@ -11,15 +11,15 @@ const DirectorySelect = () => {
   console.log('Nombre:', decodeURIComponent(directoryName));
 
   return (
-    <div className="h-screen w-screen flex flex-row-reverse overflow-x-hidden">
-      <div className='w-[85%] bg-blue-400 '>
+    <div className="h-screen w-screen flex flex-row-reverse overflow-x-hidden ">
+      <div className='w-[85%] '>
         {/*<p>ID: {directoryId}</p>*/}
         <p>Directorio: {decodeURIComponent(directoryName)}</p>
         <TopNavbar />
         <FileList />
         <DirectoryList />
       </div>
-      <div className='w-[15%] bg-white'>
+      <div className='w-[15%] bg-[#F6F5F5] '>
         <Navbar />
       </div>
     </div>
