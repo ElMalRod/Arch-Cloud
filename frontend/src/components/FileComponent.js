@@ -14,6 +14,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
 
+const getFileImage = (extension) => {
+  switch (extension) {
+    case ".txt":
+      return ImgTXT;
+    case ".html":
+      return ImgHTML;
+    default:
+      return null;
+  }
+};
 
 const FileComponent = ({ file }) => {
   const { _id, filename, extension, path, content, createdAt } = file;
@@ -121,7 +131,12 @@ const FileComponent = ({ file }) => {
             </div>
           </div>
           <div className="bg-blue-100n grid place-content-center">
-            <img src={ImgTXT} alt="Imagen de fondo" width={70} height={70} />
+          <img
+          src={getFileImage(extension)}
+          alt="Imagen de fondo"
+          width={70}
+          height={70}
+        />
           </div>
           <div>
             {/* Renderiza el TextEditor solo si isEditorVisible es true */}
@@ -136,6 +151,7 @@ const FileComponent = ({ file }) => {
       </Link>
     </div>
   );
+
 };
 
 export default FileComponent;
