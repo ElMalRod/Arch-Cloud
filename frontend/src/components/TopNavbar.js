@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { FaUserCircle, FaLock, FaPowerOff } from 'react-icons/fa';
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -7,11 +8,20 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import Modal from "../views/Modal";
+import Alert from "@material-ui/lab/Alert";
+
 
 const TopNavbar = () => {
   const [openModal, setOpenModal] = React.useState(false);
   const [currentPassword, setCurrentPassword] = React.useState('');
   const [newPassword, setNewPassword] = React.useState('');
+  const [isAlertVisible, setAlertVisible] = React.useState(false);
+  const [isWrongPasswordAlertVisible, setWrongPasswordAlertVisible] = React.useState(false);
+  const [timerId, setTimerId] = React.useState(null);
+  const [isChangingPassword, setChangingPassword] = React.useState(false);
+  const [username, setUsername] = React.useState('');
+
 
   //menu
   const [open, setOpen] = React.useState(false);
@@ -46,9 +56,70 @@ const TopNavbar = () => {
     prevOpen.current = open;
   }, [open]);
 
+  const fetchUsername = async () => {
+    try {
+      const userId = localStorage.getItem('userId');
+      const response = await axios.get(`http://localhost:4000/api/users/${userId}`);
+      const fetchedUsername = response.data.name;
+      setUsername(fetchedUsername);
+    } catch (error) {
+      console.error('Error al obtener el nombre del usuario:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchUsername();
+  }, []);
+
+  const handleChangePassword = async () => {
+    try {
+      setChangingPassword(true);
+
+      const user_id = localStorage.getItem('userId');
+      const response = await axios.post('http://localhost:4000/api/users/change-password', {
+        user_id,
+        currentPassword,
+        newPassword
+      });
+
+      console.log(response.data);
+
+      setAlertVisible(true);
+
+      const id = setTimeout(() => {
+        setAlertVisible(false);
+      }, 4000);
+      setTimerId(id);
+
+    } catch (error) {
+      console.error('Error al cambiar la contraseña:', error);
+
+      if (error.response && error.response.status === 401) {
+        setWrongPasswordAlertVisible(true);
+
+        const id = setTimeout(() => {
+          setWrongPasswordAlertVisible(false);
+        }, 4000);
+
+        setTimerId(id);
+      } else {
+        // Manejar otros tipos de error aquí
+      }
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (timerId) {
+        clearTimeout(timerId);
+      }
+    };
+  }, [timerId]);
 
   return (
-    <div className="bg-[#F6F5F5] flex items-center justify-between z-400">
+    <div className="bg-[#F6F5F5] flex items-center justify-between z-400 ">
       <form class="flex items-center w-[500px] h-[20px] p-8 pl-4 ">
         <label for="simple-search" class="sr-only">Search</label>
         <div class="relative w-full">
@@ -67,9 +138,13 @@ const TopNavbar = () => {
         </button>
       </form>
       <div className="flex items-center gap-2 text-xl text-gray-500 z-400">
-        <p>Username</p>
+        {username ? (
+          <p>{username}</p>
+        ) : (
+          <p>Cargando...</p>
+        )}
         <div className="text-3xl pr-4">
-        <Button
+          <Button
             ref={anchorRef}
             aria-controls={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
@@ -86,7 +161,11 @@ const TopNavbar = () => {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaLock />Cambiar contraseña</MenuItem>
+                      <MenuItem onClick={() => setOpenModal(true)} className="flex gap-2">
+                        <FaLock />
+                        Cambiar contraseña
+                      </MenuItem>
+
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaPowerOff />Cerrar Sesión</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
@@ -96,6 +175,56 @@ const TopNavbar = () => {
           </Popper>
         </div>
       </div>
+      <Modal isOpen={openModal} onClose={() => setOpenModal(false)} className="flex" >
+        {/* Contenido del Modal */}
+        <form className="grid grid-cols-1 h-[200px] place-content-center gap-2 text-gray-600">
+          <h1 className="text-xl font-bold">Cambiar contraseña</h1>
+          <label>
+            Contraseña actual:
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="border ml-2"
+            />
+          </label>
+          <label>
+            Nueva contraseña:
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="border ml-2"
+            />
+          </label>
+          <div className="flex justify-around">
+            <button
+              type="button"
+              onClick={() => setOpenModal(false)}
+              className="mt-2 bg-yellow-500 text-white px-6 py-2 rounded hover:bg-yellow-400 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={() => handleChangePassword()}
+              className="mt-2 bg-teal-500 text-white px-6 py-2 rounded hover:bg-teal-400 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              Confirmar
+            </button>
+          </div>
+          {isAlertVisible && (
+            <Alert severity="success" onClose={() => setAlertVisible(false)}>
+              Contraseña cambiada correctamente
+            </Alert>
+          )}
+          {isWrongPasswordAlertVisible && (
+            <Alert severity="error" onClose={() => setWrongPasswordAlertVisible(false)}>
+              Contraseña actual incorrecta
+            </Alert>
+          )}
+        </form>
+      </Modal>
     </div>
   );
 };
