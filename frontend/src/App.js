@@ -6,12 +6,14 @@ import ViewEmpleado from './views/ViewEmpleado';
 import TextEditorPage from './components/TextEditorPage';
 import DirectorySelect from './views/DirectorySelect';
 import NewDocument from './components/NewDocument';
+import Register from './views/Register';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/admin" element={<ViewAdministrador />} />
         <Route path="/empleado" element={<ViewEmpleado />} />
         <Route path="/editor/:fileId/:userId/:filename" element={<TextEditorPage />} />

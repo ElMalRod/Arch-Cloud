@@ -4,13 +4,12 @@ import CreateDirectory from "./CreateDirectory";
 import Modal from "../views/Modal";
 import logo from "../assets/2.png";
 import { FaFileAlt, FaTrash, FaFolder, FaUserFriends } from 'react-icons/fa';
-import NewDocument from "./NewDocument";
 
 
 function Navbar() {
   // Usa el estado para controlar la visibilidad del modal de Crear Archivo
   const [isCreateFileModalOpen, setIsCreateFileModalOpen] = useState(false);
-  const [directoryId, setDirectoryId] = useState(null); // Estado para almacenar el directoryId
+  const [directoryId, setDirectoryId] = useState(null);
 
   const openCreateFileModal = () => {
     setIsCreateFileModalOpen(true);

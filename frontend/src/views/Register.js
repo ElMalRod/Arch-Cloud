@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 
 const Register = () => {
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -74,7 +75,7 @@ const Register = () => {
 
               <div class="mt-3 md:flex md:items-center md:-mx-2">
                 <button
-                  onClick={() => handleRoleClick('administrador')}
+                  onClick={() => handleRoleClick('Administrador')}
                   className={`flex justify-center w-full px-6 py-3 text-white ${highlightedRole === 'administrador'
                       ? 'bg-blue-500'
                       : 'bg-gray-300 hover:bg-blue-400'
@@ -84,7 +85,7 @@ const Register = () => {
                 </button>
 
                 <button
-                  onClick={() => handleRoleClick('empleado')}
+                  onClick={() => handleRoleClick('Empleado')}
                   className={`flex justify-center w-full px-6 py-3 text-white ${highlightedRole === 'empleado'
                       ? 'bg-blue-500'
                       : 'bg-gray-300 hover:bg-blue-400'

@@ -9,6 +9,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 
 const TopNavbar = () => {
+  const [openModal, setOpenModal] = React.useState(false);
+  const [currentPassword, setCurrentPassword] = React.useState('');
+  const [newPassword, setNewPassword] = React.useState('');
+
   //menu
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -41,6 +45,8 @@ const TopNavbar = () => {
 
     prevOpen.current = open;
   }, [open]);
+
+
   return (
     <div className="bg-[#F6F5F5] flex items-center justify-between z-400">
       <form class="flex items-center w-[500px] h-[20px] p-8 pl-4 ">
