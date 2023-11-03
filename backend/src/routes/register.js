@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const UserLoginModel = require('../models/userloginModel');
+const DirectoryController = require('../controllers/directoryController');
 
 // Ruta para registrar un nuevo usuario
 router.post('/register', async (req, res) => {
@@ -16,12 +17,17 @@ router.post('/register', async (req, res) => {
 
     // Crea un nuevo usuario
     const newUser = new UserLoginModel({ name, email, password, rol });
-
+    // Crea automáticamente un directorio para el nuevo usuario
+    const directoryName = `${newUser.name}'s Directory`;
+    const newDirectory = await DirectoryController.createDirectory(newUser._id, directoryName, null);
     // Guarda el nuevo usuario en la base de datos
     await newUser.save();
 
     console.log(`Usuario registrado con éxito: ${newUser.name}`);
-    res.json({ message: 'Registro exitoso', user: newUser });
+
+
+
+    res.json({ message: 'Registro exitoso', user: newUser, directory: newDirectory });
 
   } catch (error) {
     console.error(`Error al registrar usuario: ${error}`);
