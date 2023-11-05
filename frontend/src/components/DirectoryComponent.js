@@ -50,7 +50,23 @@ const DirectoryComponent = ({ directory, setDirectories }) => {
   }, [open]);
 
   const handleCopy = async (event) => {
+    try {
+      // Realizar la solicitud POST al servidor para copiar el directorio
+      const response = await axios.post(`/directories/copy/${_id}`);
 
+      // Verificar si la solicitud fue exitosa
+      if (response.status === 200) {
+        // Actualizar la lista de directorios después de copiar
+        window
+          .alert(`Directorio ${name} copiado exitosamente`);
+          window.location.reload();
+      }
+    } catch (error) {
+      console.error('Error al copiar el directorio:', error);
+    }
+
+    // Cerrar el menú después de realizar la acción
+    handleClose();
   };
 
   return (

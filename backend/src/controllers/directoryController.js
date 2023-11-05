@@ -1,6 +1,6 @@
 const Directory = require('../models/directoryModel');
-const mongoose = require('mongoose');
 const File = require('../models/fileModel');
+
 // Controlador para crear un nuevo directorio
 exports.createDirectory = async (user_id, name, parentDirectory_id) => {
   try {
@@ -50,6 +50,7 @@ exports.getAllDirectories = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
 // subdirectorios a partir de un directorio específico
 exports.getSubdirectoriesFromDirectory = async (req, res) => {
   try {
@@ -87,6 +88,7 @@ exports.getSubdirectoriesFromDirectory = async (req, res) => {
   }
 };
 
+
 // Crear subdirectorios a partir de un directorio específico
 exports.createSubdirectory = async (req, res) => {
   try {
@@ -118,4 +120,72 @@ exports.createSubdirectory = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+// Controlador para copiar un directorio y su contenido
+exports.copyDirectory = async (req, res) => {
+  try {
+    const directoryId = req.params.directoryId;
+
+    // Buscar el directorio por su ID
+    const originalDirectory = await Directory.findById(directoryId).populate('subdirectories').populate('files');
+
+    if (!originalDirectory) {
+      return res.status(404).json({ error: 'Directorio no encontrado' });
+    }
+
+    // Crear una copia del directorio con un nombre diferente
+    const copiedDirectory = await copyDirectoryRecursive(originalDirectory);
+
+    res.json(copiedDirectory);
+  } catch (error) {
+    console.error('Error al copiar el directorio:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+// Función recursiva para copiar un directorio y su contenido
+const copyDirectoryRecursive = async (originalDirectory, parentDirectory = null) => {
+  try {
+    // Crear una copia del directorio actual
+    const copiedDirectory = new Directory({
+      name: `${originalDirectory.name} - Copia`,
+      user_id: originalDirectory.user_id,
+      parentDirectory: parentDirectory,
+    });
+
+    // Guardar la copia del directorio en la base de datos
+    await copiedDirectory.save();
+
+    // Copiar archivos asociados al directorio
+    for (const originalFileId of originalDirectory.files) {
+      const originalFile = await File.findById(originalFileId);
+      const copiedFile = new File({
+        filename: originalFile.filename,
+        extension: originalFile.extension,
+        user_id: originalFile.user_id,
+        path: originalFile.path,
+        shared: originalFile.shared,
+        content: originalFile.content,
+        directory_id: copiedDirectory._id,
+      });
+      await copiedFile.save();
+      copiedDirectory.files.push(copiedFile._id);
+    }
+
+    // Recorrer recursivamente los subdirectorios
+    for (const originalSubdirectoryId of originalDirectory.subdirectories) {
+      const copiedSubdirectory = await copyDirectoryRecursive(originalSubdirectoryId, copiedDirectory._id);
+      copiedDirectory.subdirectories.push(copiedSubdirectory._id);
+    }
+
+    // Actualizar el array subdirectories del directorio original
+    originalDirectory.subdirectories.push(copiedDirectory._id);
+    await originalDirectory.save();
+
+    return copiedDirectory;
+  } catch (error) {
+    console.error('Error en copyDirectoryRecursive:', error);
+    throw new Error(`Error al copiar el directorio: ${error.message}`);
+  }
+};
+
 
