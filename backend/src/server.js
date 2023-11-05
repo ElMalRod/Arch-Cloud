@@ -10,7 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 // Habilitar CORS
-app.use(cors());
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+
 
 // Conectar a la base de datos
 connectDB();

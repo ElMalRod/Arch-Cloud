@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaFolder, FaEllipsisV, FaRegCopy, FaArrowsAlt, FaTrash, FaShare } from 'react-icons/fa';
 import Button from '@material-ui/core/Button';
@@ -8,14 +8,17 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import axios from "axios";
 
-const DirectoryComponent = ({ directory }) => {
+const DirectoryComponent = ({ directory, setDirectories }) => {
   const { _id, name } = directory;
+  const userId = localStorage.getItem("userId");
+  const directoryId = localStorage.getItem("directoryId");
 
   console.log('URL generada:', `/directory/${_id}/${encodeURIComponent(name)}`);
 
   //menu
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const anchorRef = React.useRef(null);
 
   const handleToggle = () => {
@@ -37,15 +40,18 @@ const DirectoryComponent = ({ directory }) => {
     }
   }
 
-  // return focus to the button when we transitioned from !open -> open
   const prevOpen = React.useRef(open);
-  React.useEffect(() => {
+  useEffect(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
 
     prevOpen.current = open;
   }, [open]);
+
+  const handleCopy = async (event) => {
+
+  };
 
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">
@@ -76,7 +82,7 @@ const DirectoryComponent = ({ directory }) => {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
+                      <MenuItem onClick={handleCopy} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaShare />Compartir</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaTrash />Eliminar</MenuItem>

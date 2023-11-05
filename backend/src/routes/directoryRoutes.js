@@ -8,7 +8,10 @@ router.get('/subdirectories/:userId/:directoryId', directoryController.getSubdir
 // Obtener todos los directorios de un usuario
 router.get('/:user_id', directoryController.getAllDirectories);
 
-// Crear un nuevo directorio
+// Crear subdirectorios a partir de un directorio específico
+router.post('/createSubdirectory', directoryController.createSubdirectory);
+ 
+// Crear directorio
 router.post('/', directoryController.createDirectory);
 
 module.exports = router;

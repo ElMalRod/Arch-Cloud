@@ -105,6 +105,45 @@ router.get('/directory/:directoryId', async (req, res) => {
   }
 });
 
+// Ruta para copiar un archivo
+router.post('/copy/:fileId', async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+
+    // Buscar el archivo por su ID
+    const originalFile = await File.findById(fileId);
+
+    if (!originalFile) {
+      return res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+
+    // Crear una copia del archivo con un nombre diferente
+    const copiedFile = new File({
+      filename: `${originalFile.filename} - Copia`,
+      extension: originalFile.extension,
+      user_id: originalFile.user_id,
+      path: originalFile.path,
+      shared: originalFile.shared,
+      content: originalFile.content,
+      directory_id: originalFile.directory_id,
+    });
+
+    // Guardar la copia en la colección 'files'
+    await copiedFile.save();
+
+    // Añadir el ID de la copia al mismo directorio del archivo original
+    const directory = await Directory.findById(originalFile.directory_id);
+    if (directory) {
+      directory.files.push(copiedFile._id);
+      await directory.save();
+    }
+
+    res.json(copiedFile);
+  } catch (error) {
+    console.error('Error al copiar el archivo:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
 
 
 module.exports = router;

@@ -17,7 +17,6 @@ function ViewEmpleado() {
       <div className='w-[15%] bg-[#F6F5F5]'>
         <Navbar />
       </div>
-
     </div>
   );
 }

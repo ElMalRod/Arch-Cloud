@@ -48,7 +48,7 @@ function CreateDirectory() {
         parentDirectory_id: currentDirectoryId,
       };
 
-      const response = await axios.post('http://localhost:4000/api/directories', formDataForRequest);
+      const response = await axios.post('http://localhost:4000/api/directories/createSubdirectory', formDataForRequest);
 
       console.log('Directorio creado exitosamente:', response.data);
 

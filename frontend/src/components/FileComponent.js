@@ -87,6 +87,26 @@ const FileComponent = ({ file }) => {
     prevOpen.current = open;
   }, [open]);
 
+  const handleCopy = async (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+
+    if (open) {
+      if (event.currentTarget.innerText === 'Copiar') {
+        try {
+          // Realizar la solicitud para copiar el archivo
+          await axios.post(`http://localhost:4000/api/files/copy/${file._id}`);
+          window.location.reload();
+        } catch (error) {
+          console.error("Error al copiar el archivo:", error);
+        }
+      }
+      setOpen(false);
+    }
+  };
+
+
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px]  grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
 
@@ -110,7 +130,7 @@ const FileComponent = ({ file }) => {
                 <Paper>
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
+                      <MenuItem onClick={handleCopy} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaShare />Compartir</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaTrash />Eliminar</MenuItem>

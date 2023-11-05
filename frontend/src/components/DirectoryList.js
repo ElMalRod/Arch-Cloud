@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+// Importa useState
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DirectoryComponent from "./DirectoryComponent";
 import { useParams } from "react-router-dom";
 
 const DirectoryList = () => {
   const { directoryId } = useParams();
-  const [directories, setDirectories] = useState([]);
+  const [directories, setDirectories] = useState([]); // Asegúrate de tener el estado y su función de actualización
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
@@ -32,7 +33,8 @@ const DirectoryList = () => {
         .filter((directory) => directory._id !== localStorage.getItem("directoryId"))
         .map((directory) => (
           <div key={directory._id}>
-            <DirectoryComponent directory={directory} />
+            {/* Pasa setDirectories como prop */}
+            <DirectoryComponent directory={directory} setDirectories={setDirectories} />
           </div>
         ))}
     </div>

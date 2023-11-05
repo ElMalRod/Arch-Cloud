@@ -1,6 +1,6 @@
 const Directory = require('../models/directoryModel');
-
-
+const mongoose = require('mongoose');
+const File = require('../models/fileModel');
 // Controlador para crear un nuevo directorio
 exports.createDirectory = async (user_id, name, parentDirectory_id) => {
   try {
@@ -33,6 +33,7 @@ exports.createDirectory = async (user_id, name, parentDirectory_id) => {
     throw new Error(`Error al crear el directorio: ${error.message}`);
   }
 };
+
 // Controlador para obtener todos los directorios de un usuario
 exports.getAllDirectories = async (req, res) => {
   try {
@@ -85,3 +86,36 @@ exports.getSubdirectoriesFromDirectory = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
+
+// Crear subdirectorios a partir de un directorio específico
+exports.createSubdirectory = async (req, res) => {
+  try {
+    const { name, user_id, parentDirectory_id } = req.body;
+
+    // Verificar si el directorio padre existe
+    const parentDirectory = await Directory.findOne({ _id: parentDirectory_id, user_id });
+
+    if (!parentDirectory) {
+      return res.status(404).json({ message: 'Directorio padre no encontrado' });
+    }
+
+    // Crear el nuevo subdirectorio
+    const newSubdirectory = new Directory({
+      name,
+      user_id,
+      parentDirectory: parentDirectory._id,
+    });
+
+    await newSubdirectory.save();
+
+    // Agregar el nuevo subdirectorio a la lista de subdirectorios del directorio padre
+    parentDirectory.subdirectories.push(newSubdirectory._id);
+    await parentDirectory.save();
+
+    res.status(201).json(newSubdirectory);
+  } catch (error) {
+    console.error('Error al crear subdirectorio:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
