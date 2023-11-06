@@ -22,6 +22,12 @@ const TopNavbar = () => {
   const [isChangingPassword, setChangingPassword] = React.useState(false);
   const [username, setUsername] = React.useState('');
 
+  const handleLogout = () => {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('directoryId');
+    localStorage.removeItem('userRole');
+    window.location.href = '/';
+  };
 
   //menu
   const [open, setOpen] = React.useState(false);
@@ -166,7 +172,9 @@ const TopNavbar = () => {
                         Cambiar contraseña
                       </MenuItem>
 
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaPowerOff />Cerrar Sesión</MenuItem>
+                      <MenuItem onClick={handleLogout} className="flex gap-2">
+                        <FaPowerOff />Cerrar Sesión
+                      </MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>

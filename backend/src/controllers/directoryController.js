@@ -142,7 +142,6 @@ exports.copyDirectory = async (req, res) => {
   }
 };
 
-// Función recursiva para copiar un directorio y su contenido
 const copyDirectoryRecursive = async (originalDirectory, parentDirectory = null) => {
   try {
     // Crear una copia del directorio actual
@@ -187,5 +186,3 @@ const copyDirectoryRecursive = async (originalDirectory, parentDirectory = null)
     throw new Error(`Error al copiar el directorio: ${error.message}`);
   }
 };
-
-

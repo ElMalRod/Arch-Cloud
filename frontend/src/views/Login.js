@@ -34,8 +34,10 @@ const Login = () => {
 
       // Redirige al usuario según su rol
       if (response.data.user.rol === 'Administrador') {
+        localStorage.setItem('userRole', 'Administrador');
         window.location.href = '/admin';
       } else if (response.data.user.rol === 'Empleado') {
+        localStorage.setItem('userRole', 'Empleado');
         window.location.href = '/empleado';
       }
 

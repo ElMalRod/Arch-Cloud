@@ -10,10 +10,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import axios from "axios";
 
-const DirectoryComponent = ({ directory, setDirectories }) => {
+const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMoveListOpen, }) => {
   const { _id, name } = directory;
-  const userId = localStorage.getItem("userId");
-  const directoryId = localStorage.getItem("directoryId");
 
   console.log('URL generada:', `/directory/${_id}/${encodeURIComponent(name)}`);
 
@@ -52,23 +50,22 @@ const DirectoryComponent = ({ directory, setDirectories }) => {
   const handleCopy = async (event) => {
     try {
       // Realizar la solicitud POST al servidor para copiar el directorio
-      const response = await axios.post(`/directories/copy/${_id}`);
+      const response = await axios.post(`http://localhost:4000/api/directories/copy/${_id}`);
 
       // Verificar si la solicitud fue exitosa
-      if (response.status === 200) {
-        // Actualizar la lista de directorios después de copiar
         window
           .alert(`Directorio ${name} copiado exitosamente`);
           window.location.reload();
-      }
-    } catch (error) {
-      console.error('Error al copiar el directorio:', error);
-    }
 
-    // Cerrar el menú después de realizar la acción
+    } catch (error) {
+      console.error('Error al copiar el directorio:', error.response);
+    }
     handleClose();
   };
-
+  //mover
+  const handleOpenMoveList = () => {
+    setIsMoveListOpen(true);
+  };
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">
       <div className="flex justify-center items-center">
@@ -99,7 +96,7 @@ const DirectoryComponent = ({ directory, setDirectories }) => {
                   <ClickAwayListener onClickAway={handleClose}>
                     <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
                       <MenuItem onClick={handleCopy} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
+                      <MenuItem onClick={handleOpenMoveList} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaShare />Compartir</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaTrash />Eliminar</MenuItem>
                     </MenuList>

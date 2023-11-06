@@ -3,14 +3,18 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DirectoryComponent from "./DirectoryComponent";
 import { useParams } from "react-router-dom";
+import MoveList from "./MoveList";
 
 const DirectoryList = () => {
   const { directoryId } = useParams();
-  const [directories, setDirectories] = useState([]); // Asegúrate de tener el estado y su función de actualización
+  const [directories, setDirectories] = useState([]);
+  const [isMoveListOpen, setIsMoveListOpen] = useState(false);
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     const directoryroot = localStorage.getItem("directoryId");
+
 
     // Si no hay directoryId, realiza una solicitud para obtener los directorios del directorio raíz
     const apiEndpoint = directoryId
@@ -28,15 +32,27 @@ const DirectoryList = () => {
   }, [directoryId]);
 
   return (
-    <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 place-content-start justify-items-center gap-2 pt-2 pl-4">
-      {directories
-        .filter((directory) => directory._id !== localStorage.getItem("directoryId"))
-        .map((directory) => (
-          <div key={directory._id}>
-            {/* Pasa setDirectories como prop */}
-            <DirectoryComponent directory={directory} setDirectories={setDirectories} />
-          </div>
-        ))}
+    <div className="w-full h-full grid">
+      <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 place-content-start justify-items-center gap-2 pt-2 pl-4">
+        {directories
+          .filter((directory) => directory._id !== localStorage.getItem("directoryId"))
+          .map((directory) => (
+            <div key={directory._id}>
+              {/* Pasa setDirectories como prop */}
+              <DirectoryComponent directory={directory} setDirectories={setDirectories}
+              isMoveListOpen={isMoveListOpen}
+              setIsMoveListOpen={setIsMoveListOpen}
+              directories={directories}/>
+            </div>
+          ))}
+      </div>
+      {/* componente MoveList*/}
+      <MoveList
+        isOpen={isMoveListOpen}
+        onClose={setIsMoveListOpen}
+        userId={userId}
+        directoryId={directoryId}
+      />
     </div>
   );
 };
