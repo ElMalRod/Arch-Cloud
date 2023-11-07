@@ -8,6 +8,7 @@ const FileList = () => {
   const { directoryId } = useParams();
   const [files, setFiles] = useState([]);
   const [isMoveListOpen, setIsMoveListOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [directories, setDirectories] = useState([]);
   const userId = localStorage.getItem("userId");
 
@@ -26,7 +27,17 @@ const FileList = () => {
       .catch((error) => {
         console.error("Error al obtener archivos del directorio:", error);
       });
-  }, [directoryId]);
+
+    // También obtenemos los directorios aquí
+    axios
+      .get(`http://localhost:4000/api/directories/subdirectories/${userId}/${directoryId}`)
+      .then((response) => {
+        setDirectories(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching directories:', error);
+      });
+  }, [directoryId, userId]);
 
   return (
     <div className="w-full">
@@ -37,16 +48,17 @@ const FileList = () => {
             file={file}
             isMoveListOpen={isMoveListOpen}
             setIsMoveListOpen={setIsMoveListOpen}
-            directories={directories}
+            directories={directories}  // Pasamos los directorios a FileComponent
+            setSelectedFile={setSelectedFile}
           />
         ))}
       </div>
-      {/* componente MoveList*/}
       <MoveList
         isOpen={isMoveListOpen}
         onClose={setIsMoveListOpen}
         userId={userId}
         directoryId={directoryId}
+        file={selectedFile}
       />
     </div>
   );

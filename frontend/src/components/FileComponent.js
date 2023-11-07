@@ -19,6 +19,7 @@ import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
 
+
 const getFileImage = (extension) => {
   switch (extension) {
     case ".txt":
@@ -30,12 +31,13 @@ const getFileImage = (extension) => {
   }
 };
 
-const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories }) => {
+const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, setSelectedFile }) => {
   const { _id, filename, extension, content, createdAt } = file;
   const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(content);
 
   const userId = localStorage.getItem("userId");
+
 
   const handleOpenEditor = () => {
     setIsEditorVisible(true);
@@ -114,7 +116,14 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories })
   };
 //mover
   const handleOpenMoveList = () => {
-    setIsMoveListOpen(true);
+    setIsMoveListOpen((prev) => {
+
+      if (prev) {
+        setIsMoveListOpen(false);
+      }
+      return !prev;
+    });
+    setSelectedFile(file);
   };
 
   return (

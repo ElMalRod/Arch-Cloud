@@ -145,6 +145,56 @@ router.post('/copy/:fileId', async (req, res) => {
   }
 });
 
+// Ruta para mover un archivo a un nuevo directorio
+router.post('/move/:fileId', async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+    const { newDirectoryId } = req.body;
+
+    // Buscar el archivo por su ID
+    const file = await File.findById(fileId);
+
+    // Validar si el archivo existe
+    if (!file) {
+      return res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+
+    // Buscar el directorio actual del archivo
+    const currentDirectory = await Directory.findById(file.directory_id);
+
+    // Validar si el directorio actual y el nuevo directorio son diferentes
+    if (file.directory_id.toString() === newDirectoryId.toString()) {
+      return res.status(400).json({ error: 'El archivo ya está en este directorio' });
+    }
+
+    // Quitar el ID del archivo del directorio actual
+    currentDirectory.files = currentDirectory.files.filter(id => id.toString() !== fileId.toString());
+    await currentDirectory.save();
+
+    // Obtener el nuevo directorio
+    const newDirectory = await Directory.findById(newDirectoryId);
+
+    // Validar si el nuevo directorio existe
+    if (!newDirectory) {
+      return res.status(404).json({ error: 'Nuevo directorio no encontrado' });
+    }
+
+    // Añadir el ID del archivo al nuevo directorio
+    newDirectory.files.push(file._id);
+    await newDirectory.save();
+
+    // Actualizar el ID del directorio del archivo en la base de datos
+    file.directory_id = newDirectory._id;
+    await file.save();
+
+    res.json({ message: 'Archivo movido exitosamente' });
+  } catch (error) {
+    console.error('Error al mover el archivo:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+});
+
+
 
 module.exports = router;
 

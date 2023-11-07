@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../views/Modal';
 
-const MoveList = ({ isOpen, onClose }) => {
+const MoveList = ({ isOpen, onClose, file }) => {
   const [directories, setDirectories] = useState([]);
   const [selectedDirectory, setSelectedDirectory] = useState(null); // Track selected directory
   const userId = localStorage.getItem('userId');
@@ -30,6 +30,24 @@ const MoveList = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleMoveFile = async () => {
+    if (selectedDirectory) {
+      try {
+        const response = await axios.post(`http://localhost:4000/api/files/move/${file._id}`, {
+          newDirectoryId: selectedDirectory._id,
+        });
+
+        console.log(response.data);
+        window.alert(`Archivo ${file.filename} movido exitosamente`);
+        window.location.reload();
+        onClose(false);
+      } catch (error) {
+        console.error('Error al mover el archivo:', error);
+      }
+    }
+  };
+
+
   return (
     <Modal isOpen={isOpen} onClose={() => onClose(false)} className="flex w-[400px] ">
       <div className="w-[400px]  text-gray-500">
@@ -55,7 +73,13 @@ const MoveList = ({ isOpen, onClose }) => {
           ))}
         </ul>
       </div>
-      <button className='mt-4 bg-teal-500 text-white px-6 py-2 rounded hover:bg-teal-400 focus:outline-none focus:ring focus:border-teal-300 mr-2'>Mover</button>
+      <button
+        onClick={handleMoveFile}
+        className='mt-4 bg-teal-500 text-white px-6 py-2 rounded hover:bg-teal-400 focus:outline-none focus:ring focus:border-teal-300 mr-2'
+      >
+        Mover
+      </button>
+
     </Modal>
   );
 };

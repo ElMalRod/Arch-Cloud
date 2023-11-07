@@ -10,7 +10,7 @@ router.get('/:user_id', directoryController.getAllDirectories);
 
 // Crear subdirectorios a partir de un directorio específico
 router.post('/createSubdirectory', directoryController.createSubdirectory);
- 
+
 // Crear directorio
 router.post('/', directoryController.createDirectory);
 
