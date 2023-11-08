@@ -3,11 +3,13 @@ import axios from "axios";
 import FileComponent from "./FileComponent";
 import { useParams } from "react-router-dom";
 import MoveList from "./MoveList";
+import ShareList from "./ShareList";
 
 const FileList = () => {
   const { directoryId } = useParams();
   const [files, setFiles] = useState([]);
   const [isMoveListOpen, setIsMoveListOpen] = useState(false);
+  const [isShareListOpen, setIsShareListOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [directories, setDirectories] = useState([]);
   const userId = localStorage.getItem("userId");
@@ -50,6 +52,8 @@ const FileList = () => {
             setIsMoveListOpen={setIsMoveListOpen}
             directories={directories}  // Pasamos los directorios a FileComponent
             setSelectedFile={setSelectedFile}
+            isShareListOpen={isShareListOpen}
+            setIsShareListOpen={setIsShareListOpen}
           />
         ))}
       </div>
@@ -58,6 +62,12 @@ const FileList = () => {
         onClose={setIsMoveListOpen}
         userId={userId}
         directoryId={directoryId}
+        file={selectedFile}
+      />
+       <ShareList
+        isOpen={isShareListOpen} // Pasa el estado a ShareList
+        onClose={setIsShareListOpen} // Pasa la función a ShareList
+        userId={userId}
         file={selectedFile}
       />
     </div>

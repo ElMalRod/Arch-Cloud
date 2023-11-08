@@ -31,7 +31,7 @@ const getFileImage = (extension) => {
   }
 };
 
-const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, setSelectedFile }) => {
+const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, setSelectedFile,isShareListOpen,setIsShareListOpen }) => {
   const { _id, filename, extension, content, createdAt } = file;
   const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(content);
@@ -125,6 +125,17 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
     });
     setSelectedFile(file);
   };
+  // compartit
+  const handleShared = () => {
+    setIsShareListOpen((prev) => {
+
+      if (prev) {
+        setIsShareListOpen(false);
+      }
+      return !prev;
+    });
+    setSelectedFile(file);
+  };
 
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px]  grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
@@ -170,7 +181,7 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
                       >
                         <FaArrowsAlt />Mover
                       </MenuItem>
-                      <MenuItem onClick={handleClose} className="flex gap-2">
+                      <MenuItem onClick={handleShared} className="flex gap-2">
                         <FaShare />Compartir
                       </MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2">

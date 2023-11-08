@@ -18,8 +18,8 @@ const getFileImage = (extension) => {
 };
 
 const FileShareComponent = ({ file }) => {
-  const { _id, filename, extension, createdAt } = file.file; // Sin ".file" aquí
-  const { sharedBy } = file; // Sin ".file" aquí
+  const { _id,user_id, filename, extension, content, createdAt } = file.file;
+  const { sharedBy } = file;
   const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(file.file.content); // Sin ".file" aquí
 
@@ -39,20 +39,23 @@ const FileShareComponent = ({ file }) => {
     }
   };
 
+  useEffect(() => {
+    setUpdatedContent(content);
+  }, [content]);
+
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px] grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
       <div className="text-red-400 flex justify-self-end pt-4 pr-2">
-        {/* Puedes agregar aquí iconos de acciones, como compartir, eliminar, etc. */}
-        {/* <FaShare onClick={handleShare} /> */}
+
       </div>
 
-      <Link to={`/editor/${_id}`} className="h-full w-full cursor-pointer text-sm px-4">
+      <Link to={`/editor/${_id}/${user_id}/${filename}`} className="h-full w-full cursor-pointer text-sm px-4">
         <div className="bg-orange-300n grid grid-cols-1">
           <div className="overflow-hidden flex ">
             <div>
               <p className="text-gray-700 font-bold h-auto">{filename}</p>
               <p className="text-gray-500 ">{createdAt}</p>
-              {/* Añadido el usuario que compartió */}
+
               <p className="text-gray-500">Compartido por: {sharedBy}</p>
             </div>
           </div>
