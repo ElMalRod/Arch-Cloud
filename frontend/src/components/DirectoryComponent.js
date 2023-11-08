@@ -56,6 +56,8 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
       if (storedDirectoryId) {
         setParentDirectoryId(storedDirectoryId);
       }
+    } else {
+      setParentDirectoryId(directoryId);
     }
   }, [directoryId, setParentDirectoryId]);
 
@@ -67,7 +69,7 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
       const response = await axios.post(
         `http://localhost:4000/api/directories/copySubdirectory/${userId}/${directorySelect}`,
         {
-          parentDirectory_id: directoryId,
+          parentDirectory_id: directoryId || parentDirectoryId
         }
       );
       const copiedSubdirectory = response.data;
