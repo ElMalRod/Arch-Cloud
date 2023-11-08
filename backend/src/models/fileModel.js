@@ -40,6 +40,10 @@ const fileSchema = new Schema({
     ref: 'Directory',
     required: true,
   },
+  shared_users: {
+    type: [String],  
+    default: [],
+  },
 });
 
 const File = mongoose.model('File', fileSchema);

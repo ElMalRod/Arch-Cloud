@@ -194,6 +194,10 @@ router.post('/move/:fileId', async (req, res) => {
   }
 });
 
+// Ruta para compartir un archivo con un usuario específico
+router.post('/share/:fileId', fileController.shareFile);
+// Ruta para obtener los archivos compartidos y la información del usuario que los compartió
+router.get('/shared-files/:userId', fileController.getSharedFiles);
 
 
 module.exports = router;

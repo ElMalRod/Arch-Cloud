@@ -1,5 +1,7 @@
 const File = require('../models/fileModel');
-const Directory = require('../models/directoryModel');  // Asegúrate de importar el modelo Directory
+const Directory = require('../models/directoryModel');
+const SharedFile = require('../models/sharedFileModel');
+const User = require('../models/userModel');
 
 // Controlador para crear un archivo en un directorio específico
 exports.createFile = async (req, res) => {
@@ -59,3 +61,80 @@ exports.saveFileContent = async (req, res) => {
   }
 };
 
+// Controlador para compartir un archivo
+exports.shareFile = async (req, res) => {
+  try {
+    const fileId = req.params.fileId;
+    const { sharedWith } = req.body;
+
+    console.log('File ID:', fileId);
+    console.log('Shared With:', sharedWith);
+
+    // Buscar el archivo por su ID
+    const file = await File.findById(fileId);
+
+    // Validar si el archivo existe
+    if (!file) {
+      return res.status(404).json({ error: 'Archivo no encontrado' });
+    }
+
+    // Agregar el usuario al array de usuarios compartidos
+    file.shared_users.push(sharedWith);
+
+    // Guardar los cambios en el archivo
+    await file.save();
+    console.log('Changes saved to File document');
+
+    // Buscar el ID del usuario compartido
+    const sharedUser = await User.findOne({ name: sharedWith });
+
+    // Validar si el usuario existe
+    if (!sharedUser) {
+      return res.status(404).json({ error: 'Usuario con ese nombre no encontrado' });
+    }
+
+    // Crear un documento en la colección sharedfiles
+    await SharedFile.create({
+      file_id: fileId,
+      shared_with: sharedUser._id, // Guardar el ID del usuario compartido
+    });
+    console.log('SharedFile document created');
+    res.json({ message: 'Archivo compartido exitosamente' });
+  } catch (error) {
+    console.error('Error al compartir el archivo:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+// Controlador para obtener archivos compartidos y la información del usuario que los compartió
+exports.getSharedFiles = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    console.log('User ID requesting shared files:', userId);
+
+    // Buscar todos los archivos compartidos con el usuario
+    const sharedFiles = await SharedFile.find({ shared_with: userId });
+
+    console.log('Shared files found:', sharedFiles);
+
+    // Obtener información del usuario que compartió cada archivo
+    const sharedFilesWithUserInfo = await Promise.all(sharedFiles.map(async (sharedFile) => {
+      const file = await File.findById(sharedFile.file_id);
+      const sharedByUser = await User.findById(file.user_id);
+
+      return {
+        file,
+        sharedBy: sharedByUser ? sharedByUser.name : 'Desconocido',
+      };
+    }));
+
+    console.log('Shared files with user info:', sharedFilesWithUserInfo);
+
+    res.json(sharedFilesWithUserInfo);
+  } catch (error) {
+    console.error('Error al obtener archivos compartidos:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
