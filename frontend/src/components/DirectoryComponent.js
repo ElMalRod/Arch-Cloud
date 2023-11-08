@@ -9,10 +9,12 @@ import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import axios from "axios";
+import { useParams } from 'react-router-dom';
 
 const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMoveListOpen, }) => {
   const { _id, name } = directory;
-
+  const { directoryId } = useParams();
+  const [parentDirectoryId, setParentDirectoryId] = useState(null);
   console.log('URL generada:', `/directory/${_id}/${encodeURIComponent(name)}`);
 
   //menu
@@ -47,20 +49,37 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
     prevOpen.current = open;
   }, [open]);
 
-  const handleCopy = async (event) => {
-    try {
-      // Realizar la solicitud POST al servidor para copiar el directorio
-      const response = await axios.post(`http://localhost:4000/api/directories/copy/${_id}`);
-
-      // Verificar si la solicitud fue exitosa
-        window
-          .alert(`Directorio ${name} copiado exitosamente`);
-          window.location.reload();
-
-    } catch (error) {
-      console.error('Error al copiar el directorio:', error.response);
+  useEffect(() => {
+    // Si el directoryId no está presente en la URL, intenta obtenerlo del localStorage
+    if (!directoryId) {
+      const storedDirectoryId = localStorage.getItem('directoryId');
+      if (storedDirectoryId) {
+        setParentDirectoryId(storedDirectoryId);
+      }
     }
-    handleClose();
+  }, [directoryId, setParentDirectoryId]);
+
+
+  const handleCopy = async (directorySelect) => {
+    const userId = localStorage.getItem('userId');
+    try {
+      // Hacer una solicitud para copiar el subdirectorio
+      const response = await axios.post(
+        `http://localhost:4000/api/directories/copySubdirectory/${userId}/${directorySelect}`,
+        {
+          parentDirectory_id: directoryId,
+        }
+      );
+      const copiedSubdirectory = response.data;
+        window.alert(`Subdirectorio ${copiedSubdirectory.name} copiado exitosamente`);
+        window.location.reload();
+      console.log('Subdirectorio copiado:', copiedSubdirectory);
+    } catch (error) {
+      console.error('Error al copiar el subdirectorio:', error);
+      // Manejar el error según sea necesario
+    }
+
+
   };
   //mover
   const handleOpenMoveList = () => {
@@ -69,14 +88,14 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">
       <div className="flex justify-center items-center">
-      <Link to={`/directory/${_id}/${encodeURIComponent(name)}`} className="h-[50px] w-full text-center cursor-pointer overflow-hidden">
-        <div className="flex items-center h-full pl-4 text-gray-600">
-          <FaFolder />
-          <p className="font-bold pl-2">
-            {name}
-          </p>
-        </div>
-      </Link>
+        <Link to={`/directory/${_id}/${encodeURIComponent(name)}`} className="h-[50px] w-full text-center cursor-pointer overflow-hidden">
+          <div className="flex items-center h-full pl-4 text-gray-600">
+            <FaFolder />
+            <p className="font-bold pl-2">
+              {name}
+            </p>
+          </div>
+        </Link>
         <div className="">
           <Button
             ref={anchorRef}
@@ -93,9 +112,11 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
                 style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
               >
                 <Paper>
-                  <ClickAwayListener onClickAway={handleClose}>
+                <ClickAwayListener onClickAway={(event) => handleClose(event)}>
                     <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
-                      <MenuItem onClick={handleCopy} className="flex gap-2"><FaRegCopy />Copiar</MenuItem>
+                      <MenuItem onClick={() => handleCopy(_id)} className="flex gap-2">
+                        <FaRegCopy />Copiar
+                      </MenuItem>
                       <MenuItem onClick={handleOpenMoveList} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaShare />Compartir</MenuItem>
                       <MenuItem onClick={handleClose} className="flex gap-2"><FaTrash />Eliminar</MenuItem>

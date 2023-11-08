@@ -120,69 +120,106 @@ exports.createSubdirectory = async (req, res) => {
     res.status(500).send('Error interno del servidor');
   }
 };
-// Controlador para copiar un directorio y su contenido
-exports.copyDirectory = async (req, res) => {
+
+// Controlador para copiar un subdirectorio y su contenido
+exports.copySubdirectory = async (req, res) => {
   try {
-    const directoryId = req.params.directoryId;
+    const { userId, subdirectoryId } = req.params;
+    const { parentDirectory_id } = req.body;  // Modificado para obtener parentDirectory_id del cuerpo
 
-    // Buscar el directorio por su ID
-    const originalDirectory = await Directory.findById(directoryId).populate('subdirectories').populate('files');
+    // Buscar el subdirectorio por su ID
+    const originalSubdirectory = await Directory.findById(subdirectoryId);
 
-    if (!originalDirectory) {
-      return res.status(404).json({ error: 'Directorio no encontrado' });
+    if (!originalSubdirectory) {
+      return res.status(404).json({ error: 'Subdirectorio no encontrado' });
     }
 
-    // Crear una copia del directorio con un nombre diferente
-    const copiedDirectory = await copyDirectoryRecursive(originalDirectory);
+    // Obtener el directorio padre del subdirectorio original usando parentDirectory_id
+    const parentDirectory = await Directory.findOne({ user_id: userId, _id: parentDirectory_id });
 
-    res.json(copiedDirectory);
+    console.log('ID del subdirectorio original:', subdirectoryId);
+    console.log('ID del directorio padre del subdirectorio original:', parentDirectory_id);
+
+    if (!parentDirectory) {
+      return res.status(404).json({ error: 'Directorio padre no encontrado' });
+    }
+
+    // Crear una copia del subdirectorio con un nombre diferente
+    const copiedSubdirectory = new Directory({
+      name: `${originalSubdirectory.name} - Copia`,
+      user_id: originalSubdirectory.user_id,
+      parentDirectory: originalSubdirectory._id,
+    });
+
+    // Guardar la copia en la colección 'directories'
+    await copiedSubdirectory.save();
+
+    // Añadir el ID de la copia al mismo directorio del subdirectorio original
+    parentDirectory.subdirectories.push(copiedSubdirectory._id);
+    await parentDirectory.save();
+
+    // Copiar el contenido del subdirectorio (archivos y subdirectorios)
+    await copyContents(originalSubdirectory._id, copiedSubdirectory._id);
+
+    res.json(copiedSubdirectory);
   } catch (error) {
-    console.error('Error al copiar el directorio:', error);
+    console.error('Error al copiar el subdirectorio:', error);
     res.status(500).send('Error interno del servidor');
   }
 };
 
-const copyDirectoryRecursive = async (originalDirectory, parentDirectory = null) => {
+
+// Función auxiliar para copiar el contenido de un subdirectorio
+const copyContents = async (originalSubdirectoryId, copiedSubdirectoryId) => {
   try {
-    // Crear una copia del directorio actual
-    const copiedDirectory = new Directory({
-      name: `${originalDirectory.name} - Copia`,
-      user_id: originalDirectory.user_id,
-      parentDirectory: parentDirectory,
-    });
+    // Obtener el contenido del subdirectorio original
+    const originalSubdirectory = await Directory.findById(originalSubdirectoryId)
+      .populate('files')
+      .populate('subdirectories');
 
-    // Guardar la copia del directorio en la base de datos
-    await copiedDirectory.save();
-
-    // Copiar archivos asociados al directorio
-    for (const originalFileId of originalDirectory.files) {
+    // Recorrer y copiar archivos
+    for (const originalFileId of originalSubdirectory.files) {
       const originalFile = await File.findById(originalFileId);
+      console.log('ID del subdirectorio original (dentro de copyContents):', originalSubdirectoryId);
+console.log('ID del subdirectorio copiado (dentro de copyContents):', copiedSubdirectoryId);
+console.log('Archivo original:', originalFile);
       const copiedFile = new File({
-        filename: originalFile.filename,
+        filename: `${originalFile.filename} - Copia`,
         extension: originalFile.extension,
         user_id: originalFile.user_id,
         path: originalFile.path,
         shared: originalFile.shared,
         content: originalFile.content,
-        directory_id: copiedDirectory._id,
+        directory_id: copiedSubdirectoryId,
       });
+
       await copiedFile.save();
-      copiedDirectory.files.push(copiedFile._id);
+
+      // Añadir el ID de la copia al subdirectorio copiado
+      const copiedSubdirectory = await Directory.findById(copiedSubdirectoryId);
+      copiedSubdirectory.files.push(copiedFile._id);
+      await copiedSubdirectory.save();
     }
 
-    // Recorrer recursivamente los subdirectorios
-    for (const originalSubdirectoryId of originalDirectory.subdirectories) {
-      const copiedSubdirectory = await copyDirectoryRecursive(originalSubdirectoryId, copiedDirectory._id);
-      copiedDirectory.subdirectories.push(copiedSubdirectory._id);
+    // Recorrer y copiar subdirectorios (llamada recursiva)
+    for (const originalSubdirectoryId of originalSubdirectory.subdirectories) {
+      const newCopiedSubdirectory = new Directory({
+        name: `${originalSubdirectory.name} - Copia`,
+        user_id: originalSubdirectory.user_id,
+        parentDirectory: copiedSubdirectoryId,
+      });
+
+      await newCopiedSubdirectory.save();
+
+      // Añadir el ID de la copia al subdirectorio copiado
+      const copiedSubdirectory = await Directory.findById(copiedSubdirectoryId);
+      copiedSubdirectory.subdirectories.push(newCopiedSubdirectory._id);
+      await copiedSubdirectory.save();
+
+      // Llamada recursiva para copiar el contenido del subdirectorio
+      await copyContents(originalSubdirectoryId, newCopiedSubdirectory._id);
     }
-
-    // Actualizar el array subdirectories del directorio original
-    originalDirectory.subdirectories.push(copiedDirectory._id);
-    await originalDirectory.save();
-
-    return copiedDirectory;
   } catch (error) {
-    console.error('Error en copyDirectoryRecursive:', error);
-    throw new Error(`Error al copiar el directorio: ${error.message}`);
+    console.error('Error al copiar contenido del subdirectorio:', error);
   }
 };

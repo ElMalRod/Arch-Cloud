@@ -14,7 +14,7 @@ router.post('/createSubdirectory', directoryController.createSubdirectory);
 // Crear directorio
 router.post('/', directoryController.createDirectory);
 
-// Copiar directorio y su contenido
-router.post('/copy/:directoryId', directoryController.copyDirectory);
+// Copiar Directorio
+router.post('/copySubdirectory/:userId/:subdirectoryId', directoryController.copySubdirectory);
 
 module.exports = router;
