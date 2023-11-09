@@ -1,19 +1,23 @@
 import React, { } from 'react';
 import Navbar from '../components/Navbar';
 import TopNavbar from '../components/TopNavbar';
+import FileTrashList from '../components/FileTrashList';
 function PaperBin() {
 
 
   return (
     <div className="h-screen w-screen flex flex-row-reverse overflow-x-hidden">
-      <div className='w-[85%] bg-[white] flex flex-col-reverse'>
-        <div className='w-full h-full grid'> aui van los PaperBin</div>
-        <TopNavbar />
-      </div>
-      <div className='w-[15%] bg-[#F6F5F5]'>
-        <Navbar />
-      </div>
+    <div className='w-[85%] bg-[white] flex flex-col-reverse'>
+      <div className='w-full h-full'>
+
+      <TopNavbar />
+      <FileTrashList />
     </div>
+    </div>
+    <div className='w-[15%] bg-[#F6F5F5]'>
+      <Navbar />
+    </div>
+  </div>
   );
 }
 

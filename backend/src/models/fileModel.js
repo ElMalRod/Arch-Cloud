@@ -44,6 +44,10 @@ const fileSchema = new Schema({
     type: [String],  
     default: [],
   },
+  deleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const File = mongoose.model('File', fileSchema);

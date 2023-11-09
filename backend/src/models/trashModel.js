@@ -15,12 +15,20 @@ const trashSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  path: {
+  content: {
     type: String,
     required: true,
-  }
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+  },
+  updatedAt: {
+    type: Date,
+    required: true,
+  },
 });
 
-const Trash = mongoose.model('Trash', trashSchema);
+const Trash = mongoose.model('trash', trashSchema);
 
 module.exports = Trash;

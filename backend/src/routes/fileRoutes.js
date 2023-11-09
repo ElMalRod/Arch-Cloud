@@ -198,7 +198,8 @@ router.post('/move/:fileId', async (req, res) => {
 router.post('/share/:fileId', fileController.shareFile);
 // Ruta para obtener los archivos compartidos y la información del usuario que los compartió
 router.get('/shared-files/:userId', fileController.getSharedFiles);
-
+// Ruta para eliminar un archivo
+router.delete('/delete/:fileId', fileController.deleteFile);
 
 module.exports = router;
 

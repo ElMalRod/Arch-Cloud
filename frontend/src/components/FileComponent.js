@@ -137,6 +137,21 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
     setSelectedFile(file);
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este archivo?");
+
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:4000/api/files/delete/${_id}`);
+        // Recargar la página o realizar alguna acción adicional después de la eliminación
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al eliminar el archivo:", error);
+      }
+    }
+  };
+
+
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px]  grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
       <div className="text-red-400 flex justify-self-end pt-4 pr-2">
@@ -184,7 +199,7 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
                       <MenuItem onClick={handleShared} className="flex gap-2">
                         <FaShare />Compartir
                       </MenuItem>
-                      <MenuItem onClick={handleClose} className="flex gap-2">
+                      <MenuItem onClick={handleDelete} className="flex gap-2">
                         <FaTrash />Eliminar
                       </MenuItem>
                     </MenuList>

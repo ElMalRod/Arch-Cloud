@@ -24,7 +24,9 @@ const FileList = () => {
     axios
       .get(apiEndpoint)
       .then((response) => {
-        setFiles(response.data);
+        // Filtrar archivos eliminados
+        const filteredFiles = response.data.filter((file) => !file.deleted);
+        setFiles(filteredFiles);
       })
       .catch((error) => {
         console.error("Error al obtener archivos del directorio:", error);
@@ -50,7 +52,7 @@ const FileList = () => {
             file={file}
             isMoveListOpen={isMoveListOpen}
             setIsMoveListOpen={setIsMoveListOpen}
-            directories={directories}  // Pasamos los directorios a FileComponent
+            directories={directories}
             setSelectedFile={setSelectedFile}
             isShareListOpen={isShareListOpen}
             setIsShareListOpen={setIsShareListOpen}
@@ -64,9 +66,9 @@ const FileList = () => {
         directoryId={directoryId}
         file={selectedFile}
       />
-       <ShareList
-        isOpen={isShareListOpen} // Pasa el estado a ShareList
-        onClose={setIsShareListOpen} // Pasa la función a ShareList
+      <ShareList
+        isOpen={isShareListOpen}
+        onClose={setIsShareListOpen}
         userId={userId}
         file={selectedFile}
       />

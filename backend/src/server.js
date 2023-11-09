@@ -27,6 +27,7 @@ app.use('/api/auth', require('./routes/register')); // Ruta de registro
 app.use('/api/files', fileRoutes);
 app.use('/api/trash', trashRoutes);
 app.use('/api/directories', directoryRoutes);
+app.use('/trash', trashRoutes);
 
 // Iniciar el servidor
 app.listen(PORT, () => {

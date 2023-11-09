@@ -8,12 +8,12 @@ const sharedFileSchema = new Schema({
     required: true,
   },
   shared_with: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',  // Referencia al modelo de usuarios
     required: true,
   },
 });
 
-const SharedFile = mongoose.model('sharedfiles', sharedFileSchema);
+const SharedFile = mongoose.model('Sharedfiles', sharedFileSchema);
 
 module.exports = SharedFile;

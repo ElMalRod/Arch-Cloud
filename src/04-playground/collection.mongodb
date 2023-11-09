@@ -73,7 +73,7 @@ db.createCollection("files", {
     }
   }
 })
-db.createCollection("trash", {
+db.createCollection("trashes", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
