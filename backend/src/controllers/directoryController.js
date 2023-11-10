@@ -1,8 +1,7 @@
 const Directory = require('../models/directoryModel');
 const File = require('../models/fileModel');
 const User = require('../models/userModel');
-const fs = require('fs');
-const path = require('path');
+const TrashesDirectory = require('../models/trashesdirectoryModel');
 
 // Controlador para crear un nuevo directorio
 exports.createDirectory = async (user_id, name, parentDirectory_id) => {
@@ -261,6 +260,98 @@ exports.moveSubdirectory = async (req, res) => {
     res.json(originalSubdirectory);
   } catch (error) {
     console.error('Error al mover el subdirectorio:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+
+// Controlador para mover un directorio a la papelera
+// Controlador para mover un directorio a la papelera
+exports.moveSubdirectoryToTrash = async (req, res) => {
+  try {
+    const { userId, subdirectoryId, newParentDirectoryId } = req.body;
+
+    // Buscar el subdirectorio por su ID
+    const originalSubdirectory = await Directory.findById(subdirectoryId);
+
+    if (!originalSubdirectory) {
+      return res.status(404).json({ error: 'Subdirectorio no encontrado' });
+    }
+
+    // Obtener el directorio padre actual del subdirectorio
+    const currentParentDirectory = await Directory.findOne({ user_id: userId, subdirectories: subdirectoryId });
+
+    if (!currentParentDirectory) {
+      return res.status(404).json({ error: 'Directorio padre actual no encontrado' });
+    }
+
+    // Eliminar el ID del subdirectorio del directorio padre actual
+    currentParentDirectory.subdirectories = currentParentDirectory.subdirectories.filter(id => id.toString() !== subdirectoryId);
+    await currentParentDirectory.save();
+
+    // Crear un documento en la colección 'trashesdirectory'
+    await TrashesDirectory.create({
+      subdirectory_id: subdirectoryId,
+      trashed_by: userId,
+    });
+
+    // Puedes agregar lógica adicional aquí para manejar la eliminación de archivos asociados, si es necesario.
+
+    res.json(originalSubdirectory);
+  } catch (error) {
+    console.error('Error al mover el subdirectorio a la papelera:', error);
+    res.status(500).send('Error interno del servidor');
+  }
+};
+
+exports.getTrashedDirectories = async (req, res) => {
+  try {
+    const trashedDirectories = await TrashesDirectory.find();
+
+    const trashedDirectoriesInfo = await Promise.all(trashedDirectories.map(async (trashedDirectory) => {
+      try {
+        const directory = trashedDirectory.subdirectory_id
+          ? await Directory.findById(trashedDirectory.subdirectory_id)
+          : null;
+
+        if (!directory) {
+          console.error('Subdirectorio no encontrado para el trashedDirectory:', trashedDirectory);
+          return {
+            trashedDirectory,
+            directoryInfo: {
+              directory: null,
+              subdirectories: [],
+              files: [],
+            },
+          };
+        }
+
+        // Utilizar populate para obtener automáticamente subdirectorios y archivos
+        const directoryInfo = await Directory.populate(directory, { path: 'subdirectories files' });
+
+        return {
+          trashedDirectory: {
+            ...trashedDirectory.toObject(),
+            deletedAt: directoryInfo.deletedAt,
+          },
+          directoryInfo,
+        };
+      } catch (error) {
+        console.error('Error al obtener información detallada para el trashedDirectory:', error);
+        return {
+          trashedDirectory,
+          directoryInfo: {
+            directory: null,
+            subdirectories: [],
+            files: [],
+          },
+        };
+      }
+    }));
+
+    res.json(trashedDirectoriesInfo);
+  } catch (error) {
+    console.error('Error al obtener subdirectorios movidos a la papelera:', error);
     res.status(500).send('Error interno del servidor');
   }
 };

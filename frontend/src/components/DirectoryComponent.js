@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaFolder, FaEllipsisV, FaRegCopy, FaArrowsAlt, FaTrash, FaShare } from 'react-icons/fa';
+import { FaFolder, FaEllipsisV, FaRegCopy, FaArrowsAlt, FaTrash } from 'react-icons/fa';
 import Button from '@material-ui/core/Button';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
@@ -94,6 +94,25 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
     });
     setSelectedDirectory(directory);
   };
+
+  const handleDelete = async () => {
+    const userId = localStorage.getItem('userId');
+    const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este directorio?");
+    if (confirmDelete) {
+      try {
+       await axios.post(`http://localhost:4000/api/trash/deleted-directory`,
+        {
+          userId: userId,
+          subdirectoryId: _id,
+        });
+        // Recargar la página o realizar alguna acción adicional después de la eliminación
+        window.location.reload();
+      } catch (error) {
+        console.error("Error al eliminar el directorio:", error);
+      }
+    }
+  };
+
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">
       <div className="flex justify-center items-center">
@@ -127,8 +146,7 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
                         <FaRegCopy />Copiar
                       </MenuItem>
                       <MenuItem onClick={handleOpenMoveList} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaShare />Compartir</MenuItem>
-                      <MenuItem onClick={handleClose} className="flex gap-2"><FaTrash />Eliminar</MenuItem>
+                      <MenuItem onClick={handleDelete} className="flex gap-2"><FaTrash />Eliminar</MenuItem>
                     </MenuList>
                   </ClickAwayListener>
                 </Paper>

@@ -2,6 +2,7 @@ import React, { } from 'react';
 import Navbar from '../components/Navbar';
 import TopNavbar from '../components/TopNavbar';
 import FileTrashList from '../components/FileTrashList';
+import DirectoryTrashList from '../components/DirectoryTrashList';
 function PaperBin() {
 
 
@@ -12,6 +13,7 @@ function PaperBin() {
 
       <TopNavbar />
       <FileTrashList />
+      <DirectoryTrashList />
     </div>
     </div>
     <div className='w-[15%] bg-[#F6F5F5]'>

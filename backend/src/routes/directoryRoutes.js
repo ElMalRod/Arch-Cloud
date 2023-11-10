@@ -20,4 +20,6 @@ router.post('/copySubdirectory/:userId/:subdirectoryId', directoryController.cop
 // Ruta para mover un subdirectorio
 router.post('/moveSubdirectory', directoryController.moveSubdirectory);
 
+
+
 module.exports = router;

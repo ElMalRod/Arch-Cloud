@@ -159,3 +159,22 @@ db.createCollection("sharedfiles", {
     }
   }
 })
+
+db.createCollection("trashesdirectory", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["directory_id", "trashed_by"],
+      properties: {
+        directory_id: {
+          bsonType: "objectId",
+          description: "must be a valid ObjectId and is required"
+        },
+        trashed_by: {
+          bsonType: "string",
+          description: "must be a string and is required"
+        }
+      }
+    }
+  }
+})
