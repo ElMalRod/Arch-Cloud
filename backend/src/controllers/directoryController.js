@@ -1,5 +1,8 @@
 const Directory = require('../models/directoryModel');
 const File = require('../models/fileModel');
+const User = require('../models/userModel');
+const fs = require('fs');
+const path = require('path');
 
 // Controlador para crear un nuevo directorio
 exports.createDirectory = async (user_id, name, parentDirectory_id) => {
@@ -88,7 +91,6 @@ exports.getSubdirectoriesFromDirectory = async (req, res) => {
   }
 };
 
-
 // Crear subdirectorios a partir de un directorio específico
 exports.createSubdirectory = async (req, res) => {
   try {
@@ -168,7 +170,6 @@ exports.copySubdirectory = async (req, res) => {
   }
 };
 
-
 // Función auxiliar para copiar el contenido de un subdirectorio
 const copyContents = async (originalSubdirectoryId, copiedSubdirectoryId) => {
   try {
@@ -221,5 +222,45 @@ console.log('Archivo original:', originalFile);
     }
   } catch (error) {
     console.error('Error al copiar contenido del subdirectorio:', error);
+  }
+};
+
+exports.moveSubdirectory = async (req, res) => {
+  try {
+    const { userId, subdirectoryId, newParentDirectoryId } = req.body;
+
+    // Buscar el subdirectorio por su ID
+    const originalSubdirectory = await Directory.findById(subdirectoryId);
+
+    if (!originalSubdirectory) {
+      return res.status(404).json({ error: 'Subdirectorio no encontrado' });
+    }
+
+    // Obtener el directorio padre actual del subdirectorio
+    const currentParentDirectory = await Directory.findOne({ user_id: userId, subdirectories: subdirectoryId });
+
+    if (!currentParentDirectory) {
+      return res.status(404).json({ error: 'Directorio padre actual no encontrado' });
+    }
+
+    // Obtener el directorio padre del subdirectorio original usando newParentDirectoryId
+    const newParentDirectory = await Directory.findOne({ user_id: userId, _id: newParentDirectoryId });
+
+    if (!newParentDirectory) {
+      return res.status(404).json({ error: 'Nuevo directorio padre no encontrado' });
+    }
+
+    // Eliminar el ID del subdirectorio del directorio padre actual
+    currentParentDirectory.subdirectories = currentParentDirectory.subdirectories.filter(id => id.toString() !== subdirectoryId);
+    await currentParentDirectory.save();
+
+    // Agregar el ID del subdirectorio al nuevo directorio padre
+    newParentDirectory.subdirectories.push(subdirectoryId);
+    await newParentDirectory.save();
+
+    res.json(originalSubdirectory);
+  } catch (error) {
+    console.error('Error al mover el subdirectorio:', error);
+    res.status(500).send('Error interno del servidor');
   }
 };
