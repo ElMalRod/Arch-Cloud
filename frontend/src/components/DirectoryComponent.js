@@ -11,7 +11,7 @@ import MenuList from '@material-ui/core/MenuList';
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 
-const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMoveListOpen, }) => {
+const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, setIsMoveListOpen, }) => {
   const { _id, name } = directory;
   const { directoryId } = useParams();
   const [parentDirectoryId, setParentDirectoryId] = useState(null);
@@ -85,7 +85,14 @@ const DirectoryComponent = ({ directory, setDirectories, isMoveListOpen, setIsMo
   };
   //mover
   const handleOpenMoveList = () => {
-    setIsMoveListOpen(true);
+    setIsMoveListOpen((prev) => {
+
+      if (prev) {
+        setIsMoveListOpen(false);
+      }
+      return !prev;
+    });
+    setSelectedDirectory(directory);
   };
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from '../views/Modal';
 
-const MoveList = ({ isOpen, onClose, file }) => {
+const MoveList = ({ isOpen, onClose, item, isFile }) => {
   const [directories, setDirectories] = useState([]);
-  const [selectedDirectory, setSelectedDirectory] = useState(null); // Track selected directory
+  const [selectedDirectory, setSelectedDirectory] = useState(null);
   const userId = localStorage.getItem('userId');
   const directoryId = localStorage.getItem('directoryId');
 
@@ -21,7 +21,6 @@ const MoveList = ({ isOpen, onClose, file }) => {
     fetchData();
   }, [userId, directoryId]);
 
-  // Handle checkbox change
   const handleCheckboxChange = (event, directory) => {
     if (event.target.checked) {
       setSelectedDirectory(directory);
@@ -30,23 +29,33 @@ const MoveList = ({ isOpen, onClose, file }) => {
     }
   };
 
-  const handleMoveFile = async () => {
+  const handleMove = async () => {
     if (selectedDirectory) {
       try {
-        const response = await axios.post(`http://localhost:4000/api/files/move/${file._id}`, {
-          newDirectoryId: selectedDirectory._id,
-        });
+        let response;
+
+        if (isFile && item && item._id) {
+          response = await axios.post(`http://localhost:4000/api/files/move/${item._id}`, {
+            newDirectoryId: selectedDirectory._id,
+          });
+          window.alert(`Archivo ${item.filename} movido exitosamente`);
+        } else if (!isFile && item && item._id) {
+          response = await axios.post(`http://localhost:4000/api/directories/moveSubdirectory`, {
+            userId: userId,
+            subdirectoryId: item._id,
+            newParentDirectoryId: selectedDirectory._id,
+          });
+          window.alert(`Directorio ${item.name} movido exitosamente`);
+        }
 
         console.log(response.data);
-        window.alert(`Archivo ${file.filename} movido exitosamente`);
         window.location.reload();
         onClose(false);
       } catch (error) {
-        console.error('Error al mover el archivo:', error);
+        console.error('Error al mover el elemento:', error);
       }
     }
   };
-
 
   return (
     <Modal isOpen={isOpen} onClose={() => onClose(false)} className="flex w-[400px] ">
@@ -74,7 +83,7 @@ const MoveList = ({ isOpen, onClose, file }) => {
         </ul>
       </div>
       <button
-        onClick={handleMoveFile}
+        onClick={handleMove}
         className='mt-4 bg-teal-500 text-white px-6 py-2 rounded hover:bg-teal-400 focus:outline-none focus:ring focus:border-teal-300 mr-2'
       >
         Mover

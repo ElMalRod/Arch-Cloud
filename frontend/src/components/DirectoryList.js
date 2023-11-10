@@ -9,6 +9,7 @@ const DirectoryList = () => {
   const { directoryId } = useParams();
   const [directories, setDirectories] = useState([]);
   const [isMoveListOpen, setIsMoveListOpen] = useState(false);
+  const [selectedDirectory, setSelectedDirectory] = useState(null);
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
@@ -38,11 +39,14 @@ const DirectoryList = () => {
           .filter((directory) => directory._id !== localStorage.getItem("directoryId"))
           .map((directory) => (
             <div key={directory._id}>
-              {/* Pasa setDirectories como prop */}
-              <DirectoryComponent directory={directory} setDirectories={setDirectories}
-              isMoveListOpen={isMoveListOpen}
-              setIsMoveListOpen={setIsMoveListOpen}
-              directories={directories}/>
+              <DirectoryComponent
+                directory={directory}
+                setDirectories={setDirectories}
+                isMoveListOpen={isMoveListOpen}
+                setIsMoveListOpen={setIsMoveListOpen}
+                setSelectedDirectory={setSelectedDirectory}
+                directories={directories}
+              />
             </div>
           ))}
       </div>
@@ -52,6 +56,8 @@ const DirectoryList = () => {
         onClose={setIsMoveListOpen}
         userId={userId}
         directoryId={directoryId}
+        item={selectedDirectory}
+        isFile={false}
       />
     </div>
   );

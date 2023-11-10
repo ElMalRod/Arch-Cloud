@@ -64,8 +64,10 @@ const FileList = () => {
         onClose={setIsMoveListOpen}
         userId={userId}
         directoryId={directoryId}
-        file={selectedFile}
+        item={selectedFile}
+        isFile={true}
       />
+
       <ShareList
         isOpen={isShareListOpen}
         onClose={setIsShareListOpen}
