@@ -29,7 +29,11 @@ const FileShareComponent = ({ file }) => {
   const { sharedBy } = file;
   const [isEditorVisible, setIsEditorVisible] = useState(false);
   const [updatedContent, setUpdatedContent] = useState(file.file.content); // Sin ".file" aquí
-  const [isVisible, setIsVisible] = useState(true);
+
+  const [isVisible, setIsVisible] = useState(() => {
+    const storedVisibility = localStorage.getItem(`fileVisibility_${_id}`);
+    return storedVisibility !== null ? JSON.parse(storedVisibility) : true;
+  });
 
   const handleCloseEditor = () => {
     setIsEditorVisible(false);
@@ -84,18 +88,17 @@ const FileShareComponent = ({ file }) => {
     }, [open]);
 
 
-  const handleDelete = () => {
-    const userConfirmed = window.confirm("¿Está seguro de que desea eliminar este archivo?");
-    if (!userConfirmed) {
-      setIsVisible(false);
+    const handleDelete = () => {
+      const userConfirmed = window.confirm("¿Está seguro de que desea eliminar este archivo?");
+      if (userConfirmed) {
+        setIsVisible(false);
+        localStorage.setItem(`fileVisibility_${_id}`, JSON.stringify(false));
+      }
+    };
+
+    if (!isVisible) {
+      return null;
     }
-
-  };
-
-  // Renderiza el componente solo si el archivo es visible
-  if (!isVisible) {
-    return null;
-  }
 
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px] grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
