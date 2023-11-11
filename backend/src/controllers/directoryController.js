@@ -264,12 +264,10 @@ exports.moveSubdirectory = async (req, res) => {
   }
 };
 
-
-// Controlador para mover un directorio a la papelera
 // Controlador para mover un directorio a la papelera
 exports.moveSubdirectoryToTrash = async (req, res) => {
   try {
-    const { userId, subdirectoryId, newParentDirectoryId } = req.body;
+    const { userId, subdirectoryId } = req.params;
 
     // Buscar el subdirectorio por su ID
     const originalSubdirectory = await Directory.findById(subdirectoryId);

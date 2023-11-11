@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FaTrash,FaEllipsisV } from "react-icons/fa";
 import ImgTXT from "../assets/txtimg.png";
 import ImgHTML from "../assets/htmlimg.png";
-import TextEditor from "./TextEditor";
+import TextEditorRead from "./TextEditorRead";
 import axios from "axios";
 import Button from "@material-ui/core/Button";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
@@ -12,6 +12,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
+import { format } from 'date-fns';
 
 const getFileImage = (extension) => {
   switch (extension) {
@@ -99,6 +100,7 @@ const FileShareComponent = ({ file }) => {
     if (!isVisible) {
       return null;
     }
+    const fechaFormateada = format(new Date(createdAt), 'dd/MM/yyyy HH:mm:ss');
 
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px] grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
@@ -146,12 +148,12 @@ const FileShareComponent = ({ file }) => {
 
                   </div>
 
-                  <Link to={`/editor/${_id}/${user_id}/${filename}`} className="h-full w-full cursor-pointer text-sm px-4">
+                  <Link to={`/editorRead/${_id}/${user_id}/${filename}`} className="h-full w-full cursor-pointer text-sm px-4">
                     <div className="bg-orange-300n grid grid-cols-1">
                       <div className="overflow-hidden flex ">
                         <div>
                           <p className="text-gray-700 font-bold h-auto">{filename}</p>
-                          <p className="text-gray-500 ">{createdAt}</p>
+                          <p className="text-gray-500 ">{fechaFormateada}</p>
 
                           <p className="text-gray-500">Compartido por: {sharedBy}</p>
                         </div>
@@ -167,7 +169,7 @@ const FileShareComponent = ({ file }) => {
                       <div>
                         {isEditorVisible && (
                           <div className="bg-blue-400m">
-                            <TextEditor
+                            <TextEditorRead
                               fileId={_id}
                               content={updatedContent}
                               onClose={() => {

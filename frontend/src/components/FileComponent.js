@@ -18,7 +18,7 @@ import Paper from "@material-ui/core/Paper";
 import Popper from "@material-ui/core/Popper";
 import MenuItem from "@material-ui/core/MenuItem";
 import MenuList from "@material-ui/core/MenuList";
-
+import { format } from 'date-fns';
 
 const getFileImage = (extension) => {
   switch (extension) {
@@ -151,9 +151,9 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
     }
   };
 
-
+  const fechaFormateada = format(new Date(createdAt), 'dd/MM/yyyy HH:mm:ss');
   return (
-    <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px]  grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
+    <div className="bg-gray-100 z-0 rounded-xl drop-shadow-sm border h-[200px] w-[220px]  grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
       <div className="text-red-400 flex justify-self-end pt-4 pr-2">
         <div>
           <Button
@@ -219,7 +219,7 @@ const FileComponent = ({ file, isMoveListOpen, setIsMoveListOpen, directories, s
           <div className="overflow-hidden flex ">
             <div>
               <p className="text-gray-700 font-bold h-auto">{filename}</p>
-              <p className="text-gray-500 ">{createdAt}</p>
+              <p className="text-gray-500 ">{fechaFormateada}</p>
             </div>
           </div>
           <div className="bg-blue-100n grid place-content-center">

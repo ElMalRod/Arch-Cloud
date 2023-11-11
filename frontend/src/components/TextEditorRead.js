@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function TextEditor({ content, fileId, onContentChange, onClose }) {
+function TextEditorRead({ content, fileId, onContentChange, onClose }) {
   const [editedContent, setEditedContent] = useState("");
 
   useEffect(() => {
@@ -17,14 +17,16 @@ function TextEditor({ content, fileId, onContentChange, onClose }) {
         <textarea
           value={editedContent}
           onChange={(e) => setEditedContent(e.target.value)}
-          className="w-full h-[1000px] px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500 "
+          readOnly = {true}
+          className="w-full h-[1000px] px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring "
           placeholder="Escribe aquí..."
         />
       ) : (
         <textarea
         value={editedContent}
         onChange={(e) => setEditedContent(e.target.value)}
-        className="w-full h-[1000px] px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-500 "
+        readOnly = {true}
+        className="w-full h-[1000px] px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring "
         placeholder="Escribe aquí..."
       />
       )}
@@ -32,4 +34,4 @@ function TextEditor({ content, fileId, onContentChange, onClose }) {
   );
 }
 
-export default TextEditor;
+export default TextEditorRead;

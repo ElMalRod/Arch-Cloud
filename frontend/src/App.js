@@ -9,6 +9,7 @@ import NewDocument from './components/NewDocument';
 import Register from './views/Register';
 import SharedFiles from './views/SharedFiles';
 import PaperBin from './views/PaperBin';
+import TextEditorReadPage from './components/TextEditorReadPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/editor/:directoryId/nuevo-documento" element={<NewDocument />} />
         <Route path="/sharedirectory" element={<SharedFiles />} />
         <Route path="/paperbin" element={<PaperBin />} />
+        <Route path="/editorRead/:fileId/:userId/:filename" element={<TextEditorReadPage />} />
       </Routes>
     </Router>
   );

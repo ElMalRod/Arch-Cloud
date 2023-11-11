@@ -73,8 +73,8 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
         }
       );
       const copiedSubdirectory = response.data;
-        window.alert(`Subdirectorio ${copiedSubdirectory.name} copiado exitosamente`);
-        window.location.reload();
+      window.alert(`Subdirectorio ${copiedSubdirectory.name} copiado exitosamente`);
+      window.location.reload();
       console.log('Subdirectorio copiado:', copiedSubdirectory);
     } catch (error) {
       console.error('Error al copiar el subdirectorio:', error);
@@ -100,11 +100,11 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
     const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este directorio?");
     if (confirmDelete) {
       try {
-       await axios.post(`http://localhost:4000/api/trash/deleted-directory`,
-        {
-          userId: userId,
-          subdirectoryId: _id,
-        });
+        await axios.delete(`http://localhost:4000/api/trash/deleted-directory/${userId}/${_id}`,
+          {
+            userId: userId,
+            subdirectoryId: _id,
+          });
         // Recargar la página o realizar alguna acción adicional después de la eliminación
         window.location.reload();
       } catch (error) {
@@ -114,7 +114,7 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
   };
 
   return (
-    <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px]  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300">
+    <div className="bg-gray-100 rounded-xl drop-shadow-sm h-[50px] w-[250px] mb-8  grid grid-cols-1 text-lg place-content-center hover:bg-gray-300 hover:z-700">
       <div className="flex justify-center items-center">
         <Link to={`/directory/${_id}/${encodeURIComponent(name)}`} className="h-[50px] w-full text-center cursor-pointer overflow-hidden">
           <div className="flex items-center h-full pl-4 text-gray-600">
@@ -133,26 +133,30 @@ const DirectoryComponent = ({ directory, setSelectedDirectory, isMoveListOpen, s
           >
             <FaEllipsisV />
           </Button>
-          <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-              >
-                <Paper>
-                <ClickAwayListener onClickAway={(event) => handleClose(event)}>
-                    <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="text-gray-700">
-                      <MenuItem onClick={() => handleCopy(_id)} className="flex gap-2">
-                        <FaRegCopy />Copiar
-                      </MenuItem>
-                      <MenuItem onClick={handleOpenMoveList} className="flex gap-2"><FaArrowsAlt />Mover</MenuItem>
-                      <MenuItem onClick={handleDelete} className="flex gap-2"><FaTrash />Eliminar</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
+          <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal className="relative">
+  {({ TransitionProps, placement }) => (
+    <Grow
+      {...TransitionProps}
+    >
+      <Paper >
+        <ClickAwayListener onClickAway={(event) => handleClose(event)}>
+          <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown} className="flex text-xl text-gray-600">
+            <MenuItem onClick={() => handleCopy(_id)} className="flex px-2">
+              <FaRegCopy />
+            </MenuItem>
+            <MenuItem onClick={handleOpenMoveList} className="flex px-2">
+              <FaArrowsAlt />
+            </MenuItem>
+            <MenuItem onClick={handleDelete} className="flex px-2">
+              <FaTrash />
+            </MenuItem>
+          </MenuList>
+        </ClickAwayListener>
+      </Paper>
+    </Grow>
+  )}
+</Popper>
+
         </div>
       </div>
 

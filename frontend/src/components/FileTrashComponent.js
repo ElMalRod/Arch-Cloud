@@ -4,6 +4,7 @@ import ImgTXT from "../assets/txtimg.png";
 import ImgHTML from "../assets/htmlimg.png";
 import TextEditor from "./TextEditor";
 import axios from "axios";
+import { format } from 'date-fns';
 
 const getFileImage = (extension) => {
   switch (extension) {
@@ -31,14 +32,16 @@ const FileTrashComponent = ({ file }) => {
       });
   }, [user_id]);
 
+  const fechaFormateada = format(new Date(createdAt), 'dd/MM/yyyy HH:mm:ss');
+
   return (
     <div className="bg-gray-100 rounded-xl drop-shadow-sm border h-[200px] w-[220px] grid grid-cols-1 text-lg place-content-start justify-items-center hover:bg-gray-300">
-      <Link to={`/editor/${_id}/${user_id}/${filename}`} className="h-full w-full cursor-pointer text-sm px-4">
+      <Link to={`/editorRead/${_id}/${user_id}/${filename}`} className="h-full w-full cursor-pointer text-sm p-4">
         <div className="bg-orange-300n grid grid-cols-1">
           <div className="overflow-hidden flex">
             <div>
               <p className="text-gray-700 font-bold h-auto">{filename}</p>
-              <p className="text-gray-500 ">{createdAt}</p>
+              <p className="text-gray-500 ">{fechaFormateada}</p>
               <p className="text-gray-500">Eliminado por: {deletedByUserName}</p>
               <div className="bg-blue-100n grid place-content-center">
             <img

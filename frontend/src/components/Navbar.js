@@ -94,13 +94,21 @@ const handleShare = () => {
 const handlePaperBin = () => {
   window.location.href = '/paperbin';
 };
+const handleGoToMain = () => {
+  if (userRole === 'Administrador') {
+    window.location.href = '/admin';
+  }
+  else {
+    window.location.href = '/empleado';
+  }
+};
   return (
     <div className="bg-[#F6F5F5] w-[100%] grid grid-cols-1 place-content-start justify-items-center gap-2 p-2 text-lg text-gray-600">
 
 
       {/*CREATE DOCUMENT */}
-      <div className="bg-blue-100n grid place-content-center p-4 ">
-        <img src={logo} alt="Imagen de fondo" width={80} height={80} />
+      <div className="bg-blue-100n grid place-content-center p-4 cursor-pointer">
+        <img src={logo} alt="Imagen de fondo" width={80} height={80}  onClick={handleGoToMain}/>
       </div>
 
       {/*CREATE DOCUMENT */}
