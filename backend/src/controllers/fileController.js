@@ -143,7 +143,7 @@ exports.getSharedFiles = async (req, res) => {
 exports.deleteFile = async (req, res) => {
   try {
     const fileId = req.params.fileId;
-
+    
     // Buscar el archivo por su ID
     const file = await File.findById(fileId);
 
