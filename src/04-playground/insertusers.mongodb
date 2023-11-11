@@ -1,6 +1,6 @@
 use ("cloudArch")
 
-// Administrador
+
 db.users.insertOne({
   name: "John Doe",
   email: "john.doe@example.com",
@@ -8,7 +8,7 @@ db.users.insertOne({
   rol: "Administrador"
 })
 
-// Empleado
+
 db.users.insertOne({
   name: "Jane Doe",
   email: "Jane@example.com",

@@ -178,3 +178,115 @@ db.createCollection("trashesdirectories", {
     }
   }
 })
+
+db.getCollection('users').find({});
+db.getCollection('files').find({});
+db.getCollection('trashes').find({});
+db.getCollection('directories').find({});
+db.getCollection('sharedfiles').find({});
+db.getCollection('trashesdirectories').find({});
+
+// Compare this snippet from src/04-playground/insertdirectories.mongodb:
+// use ("cloudArch")
+//
+// db.directories.insertOne({
+//   name: "Documents",
+//   user_id: ObjectId("your_user_id_here"),
+//   files: [],
+//   subdirectories: []
+// })
+//
+// db.directories.insertOne({
+//   name: "Images",
+//   user_id: ObjectId("your_user_id_here"),
+//   files: [],
+//   subdirectories: []
+// })
+//
+// db.directories.insertOne({
+//   name: "Videos",
+//   user_id: ObjectId("your_user_id_here"),
+//   files: [],
+//   subdirectories: []
+// })
+//
+// db.directories.insertOne({
+//   name: "Music",
+//   user_id: ObjectId("your_user_id_here"),
+//   files: [],
+//   subdirectories: []
+// })
+//
+// db.directories.insertOne({
+//   name: "Other",
+//   user_id: ObjectId("your_user_id_here"),
+//   files: [],
+//   subdirectories: []
+// })
+// Compare this snippet from src/04-playground/insertsharedfiles.mongodb:
+// use ("cloudArch")
+//
+// db.sharedfiles.insertOne({
+//   file_id: ObjectId("your_file_id_here"),
+//   shared_with: "user@example"
+// })
+// Compare this snippet from src/04-playground/inserttrashes.mongodb:
+// use ("cloudArch")
+//
+// db.trashes.insertOne({
+//   filename: "example.txt",
+//   extension: "txt",
+//   user_id: ObjectId("your_user_id_here"),
+//   content: "This is the content of the file.",
+//   createdAt: new Date(),
+//   updatedAt: new Date()
+// })
+// Compare this snippet from src/04-playground/inserttrashesdirectories.mongodb:
+// use ("cloudArch")
+//
+// db.trashesdirectories.insertOne({
+//   directory_id: ObjectId("your_directory_id_here"),
+//   trashed_by: "user@example"
+// })
+// Compare this snippet from src/04-playground/updatefiles.mongodb:
+// use ("cloudArch")
+//
+// db.files.updateOne(
+//   { _id: ObjectId("your_file_id_here") },
+//   {
+//     $set: {
+//       filename: "new_filename",
+//       extension: "new_extension",
+//       path: "/new/path/to/file",
+//       shared: true,
+//       updatedAt: new Date(),
+//       content: "This is the new content of the file."
+//     }
+//   }
+// )
+// Compare this snippet from src/04-playground/updatedirectories.mongodb:
+// use ("cloudArch")
+//
+// db.directories.updateOne(
+//   { _id: ObjectId("your_directory_id_here") },
+//   {
+//     $set: {
+//       name: "new_name",
+//       updatedAt: new Date()
+//     }
+//   }
+// )
+// Compare this snippet from src/04-playground/updateusers.mongodb:
+// use ("cloudArch")
+//
+// db.users.updateOne(
+//   { _id: ObjectId("your_user_id_here") },
+//   {
+//     $set: {
+//       name: "new_name",
+//       email: "new_email",
+//       password: "new_password",
+//       rol: "new_rol"
+//     }
+//   }
+// )
