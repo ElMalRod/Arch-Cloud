@@ -60,7 +60,7 @@ const MoveList = ({ isOpen, onClose, item, isFile }) => {
   return (
     <Modal isOpen={isOpen} onClose={() => onClose(false)} className="flex ">
       <div className="w-[600px] text-gray-500 h-[250px] z-300 overflow-hidden">
-        <h1 className='pb-4 text-xl font-semibold'>Mover Archivo</h1>
+        <h1 className='pb-4 text-xl font-semibold'>Mover </h1>
         <div className='grid gap-2 w-fulll h-[250px] text-lg font-medium overflow-y-scroll'>
           {directories.map(directory => (
             <div

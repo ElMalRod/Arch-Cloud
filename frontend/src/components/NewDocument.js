@@ -99,7 +99,7 @@ function NewDocument() {
         </div>
 
 
-        <div className="px-2 hover:text-teal-500"><FaShareAlt /></div>
+
         <div className="px-2 hover:text-red-500"><FaTrashAlt /></div>
       </div>
       {isAlertVisible && (

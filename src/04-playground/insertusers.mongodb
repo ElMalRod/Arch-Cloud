@@ -1,19 +1,24 @@
 use ("cloudArch")
 
-// Admin
-db.users.insert({
-  name: "Miguel",
-  email: "migue@email.com",
+// Administrador
+db.users.insertOne({
+  name: "John Doe",
+  email: "john.doe@example.com",
   password: "123",
-  rol: "admin"
+  rol: "Administrador"
 })
 
 // Empleado
-db.users.insert({
-  name: "Juan",
-  email: "juan@email.com",
+db.users.insertOne({
+  name: "Jane Doe",
+  email: "Jane@example.com",
   password: "123",
-  rol: "empleado"
+  rol: "Empleado"
 })
 
-
+db.users.insertOne({
+  name: "Julio Santos",
+  email: "julio@example.com",
+  password: "1234",
+  rol: "Empleado"
+})

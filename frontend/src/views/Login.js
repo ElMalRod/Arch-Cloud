@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import logo from "../assets/1.png";
 const Login = () => {
   const [formData, setFormData] = useState({
     identifier: '',
@@ -56,7 +57,8 @@ const Login = () => {
   return (
     <section className="bg-white white:bg-dark-900">
       <div className="flex justify-center min-h-screen">
-        <div className="hidden bg-cover lg:block lg:w-2/5" style={{ backgroundImage: "url('../assets/1.png')" }}>
+        <div className=" w-2/5 grid justify-items-center  place-content-center bg-gray-100" >
+        <img src={logo} alt="Imagen de fondo" width={400} height={400}  />
         </div>
 
         <div className="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">

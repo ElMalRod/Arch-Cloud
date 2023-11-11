@@ -160,7 +160,7 @@ db.createCollection("sharedfiles", {
   }
 })
 
-db.createCollection("trashesdirectory", {
+db.createCollection("trashesdirectories", {
   validator: {
     $jsonSchema: {
       bsonType: "object",

@@ -12,6 +12,7 @@ function TextEditorPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [isAlertVisible, setAlertVisible] = useState(false);
 
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -48,6 +49,33 @@ function TextEditorPage() {
     window.history.back();
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("¿Estás seguro de que deseas eliminar este archivo?");
+    if (confirmDelete) {
+      try {
+        await axios.delete(`http://localhost:4000/api/files/delete/${fileId}`);
+
+        const userRole = localStorage.getItem('userRole');
+      if (userRole === "Administrador") {
+        // Redirige al panel de administrador
+        window.location.href = '/admin';
+      } else if (userRole === "Empleado") {
+        // Redirige al panel de empleado
+        window.location.href = '/empleado';
+      } else {
+        // En caso de algún otro rol, redirige a la ruta principal
+        window.location.href = '/';
+      }
+      } catch (error) {
+        console.error("Error al eliminar el archivo:", error);
+      }
+    }
+  };
+
+  const handleShared = () => {
+
+  }
+
   return (
     <div>
       <div className="fixed top-0 inset-0 grid grid-cols-1 place-content-start justify-items-center bg-gray-200 bg-opacity-40 overflow-y-scroll">
@@ -57,30 +85,33 @@ function TextEditorPage() {
           <div
             onClick={() => handleSave(content)}
             disabled={isSaving}
-            className={`px-2 hover:text-[#4592AF] ${
-              isSaving ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`px-2 hover:text-[#4592AF] ${isSaving ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             <FaSave />
           </div>
-          <div className="px-2 hover:text-teal-500" ><FaShareAlt /> </div>
-          <div className="px-2 hover:text-red-500" ><FaTrashAlt /> </div>
+          <div
+            onClick={handleDelete}
+            className="px-2 hover:text-red-500"
+          >
+            <FaTrashAlt />
+          </div>
         </div>
-        {isAlertVisible && (
-          <Alert severity="success" onClose={() => setAlertVisible(false)}>
-            Contenido guardado exitosamente
-          </Alert>
-        )}
-        <div
-          className="cursor-pointer hover:bg-gray-300 ease-in text-2xl rounded-full h-[50px] w-[50px] mx-8 flex items-center text-center justify-center justify-self-start "
-          onClick={handleGoBack}
-        >
-          <FaArrowLeft />
+          {isAlertVisible && (
+            <Alert severity="success" onClose={() => setAlertVisible(false)}>
+              Contenido guardado exitosamente
+            </Alert>
+          )}
+          <div
+            className="cursor-pointer hover:bg-gray-300 ease-in text-2xl rounded-full h-[50px] w-[50px] mx-8 flex items-center text-center justify-center justify-self-start "
+            onClick={handleGoBack}
+          >
+            <FaArrowLeft />
+          </div>
+          <TextEditor fileId={fileId} content={content} onContentChange={setContent} />
         </div>
-        <TextEditor fileId={fileId} content={content} onContentChange={setContent} />
       </div>
-    </div>
-  );
+      );
 }
 
-export default TextEditorPage;
+      export default TextEditorPage;
